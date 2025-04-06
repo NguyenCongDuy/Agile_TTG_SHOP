@@ -19,7 +19,7 @@
                                 <div class="icon">
                                     <i class="bi bi-box-seam"></i>
                                 </div>
-                                <a href="{{ route('products.index') }}" class="small-box-footer">
+                                <a href="{{ route('admin.products.index') }}" class="small-box-footer">
                                     Xem chi tiết <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -33,7 +33,7 @@
                                 <div class="icon">
                                     <i class="bi bi-tags"></i>
                                 </div>
-                                <a href="{{ route('categories.index') }}" class="small-box-footer">
+                                <a href="{{ route('admin.categories.index') }}" class="small-box-footer">
                                     Xem chi tiết <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -47,7 +47,7 @@
                                 <div class="icon">
                                     <i class="bi bi-people"></i>
                                 </div>
-                                <a href="{{ route('users.index') }}" class="small-box-footer">
+                                <a href="{{ route('admin.users.index') }}" class="small-box-footer">
                                     Xem chi tiết <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -61,7 +61,7 @@
                                 <div class="icon">
                                     <i class="bi bi-currency-dollar"></i>
                                 </div>
-                                <a href="{{ route('statistics.sales') }}" class="small-box-footer">
+                                <a href="{{ route('admin.statistics.sales') }}" class="small-box-footer">
                                     Xem chi tiết <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>

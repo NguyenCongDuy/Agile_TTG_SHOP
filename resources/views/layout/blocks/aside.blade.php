@@ -29,7 +29,7 @@
       >
         <!-- Dashboard -->
         <li class="nav-item">
-          <a href="{{ route('dashboard') }}" class="nav-link">
+          <a href="{{ route('admin.home') }}" class="nav-link">
             <i class="nav-icon bi bi-speedometer"></i>
             <p>Dashboard</p>
           </a>
@@ -46,19 +46,19 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('statistics.overview') }}" class="nav-link">
+              <a href="{{ route('admin.statistics.overview') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Tổng quan</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('statistics.sales') }}" class="nav-link">
+              <a href="{{ route('admin.statistics.sales') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Doanh thu</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('statistics.products') }}" class="nav-link">
+              <a href="{{ route('admin.statistics.products') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Sản phẩm</p>
               </a>
@@ -77,19 +77,19 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('products.index') }}" class="nav-link">
+              <a href="{{ route('admin.products.index') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Danh sách sản phẩm</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('products.create') }}" class="nav-link">
+              <a href="{{ route('admin.products.create') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Thêm sản phẩm</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('products.inventory') }}" class="nav-link">
+              <a href="{{ route('admin.products.inventory') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Quản lý kho</p>
               </a>
@@ -108,13 +108,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('categories.index') }}" class="nav-link">
+              <a href="{{ route('admin.categories.index') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Danh sách danh mục</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('categories.create') }}" class="nav-link">
+              <a href="{{ route('admin.categories.create') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Thêm danh mục</p>
               </a>
@@ -133,19 +133,19 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('users.index') }}" class="nav-link">
+              <a href="{{ route('admin.users.index') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Danh sách người dùng</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('users.create') }}" class="nav-link">
+              <a href="{{ route('admin.users.create') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Thêm người dùng</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ route('users.roles') }}" class="nav-link">
+              <a href="{{ route('admin.users.roles') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Phân quyền</p>
               </a>

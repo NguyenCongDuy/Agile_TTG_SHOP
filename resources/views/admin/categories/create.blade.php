@@ -9,7 +9,7 @@
                     <h3 class="card-title">Thêm danh mục mới</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('categories.store') }}" method="POST">
+                    <form action="{{ route('admin.categories.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name">Tên danh mục</label>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Lưu</button>
-                            <a href="{{ route('categories.index') }}" class="btn btn-default">Hủy</a>
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-default">Hủy</a>
                         </div>
                     </form>
                 </div>

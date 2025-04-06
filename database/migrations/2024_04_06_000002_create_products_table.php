@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name_product');
-            $table->integer('price');
-            $table->integer('quantity');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->string('image')->nullable();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->integer('stock')->default(0);
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -27,4 +33,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('products');
     }
-};
+}; 

@@ -34,7 +34,7 @@
                                 <td>
                                     <a href="#" class="btn btn-sm btn-outline-success"><i class="fas fa-plus"></i> Thêm</a>
                                     <a href="#" class="btn btn-sm btn-primary">Sửa</a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</button>

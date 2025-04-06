@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Danh sách danh mục</h3>
                     <div class="card-tools">
-                        <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus"></i> Thêm danh mục
                         </a>
                     </div>

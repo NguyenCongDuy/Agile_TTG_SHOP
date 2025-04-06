@@ -9,7 +9,7 @@
                     <h3 class="card-title">Thêm người dùng mới</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('users.store') }}" method="POST">
+                    <form action="{{ route('admin.users.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name">Tên người dùng</label>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Lưu</button>
-                            <a href="{{ route('users.index') }}" class="btn btn-default">Hủy</a>
+                            <a href="{{ route('admin.users.index') }}" class="btn btn-default">Hủy</a>
                         </div>
                     </form>
                 </div>
