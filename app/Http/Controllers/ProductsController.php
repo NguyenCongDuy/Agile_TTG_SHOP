@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Models\Categories;
 use App\Http\Requests\StoreProductsRequest;
 use App\Http\Requests\UpdateProductsRequest;
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
@@ -13,9 +18,8 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $title = 'Đây là trang list của sản phẩm lấy từ controller';
-        $productList = Products::all()->sortDesc();
-        return view('admin.product.index', compact('productList', 'title'));
+        $productList = Products::with('category')->paginate(10);
+        return view('admin.products.index', compact('productList'));
     }
 
     /**
@@ -23,7 +27,8 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        dd('Đây là trang thêm');
+        $categories = Category::all();
+        return view('admin.products.create', compact('categories'));
     }
 
     /**
@@ -31,40 +36,104 @@ class ProductsController extends Controller
      */
     public function inventory()
     {
-        return view('admin.product.inventory');
+        return view('admin.products.inventory');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductsRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_featured' => 'boolean',
+            'status' => 'boolean'
+        ]);
+
+        $product = new Products();
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->category_id = $request->category_id;
+        $product->is_featured = $request->is_featured ?? false;
+        $product->status = $request->status ?? true;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/products'), $imageName);
+            $product->image = 'images/products/' . $imageName;
+        }
+
+        $product->save();
+
+        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được thêm thành công.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Products $products)
+    public function show(Products $product)
     {
-        //
+        $product->load('category');
+        return view('admin.products.show', compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Products $products)
+    public function edit(Products $product)
     {
-        //
+        $categories = Category::all();
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductsRequest $request, Products $products)
+    public function update(Request $request, Products $product)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_featured' => 'boolean',
+            'status' => 'boolean'
+        ]);
+    
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->category_id = $request->category_id;
+        $product->is_featured = $request->is_featured ?? false;
+        $product->status = $request->status ?? true;
+    
+        if ($request->hasFile('image')) {
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
+            }
+    
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/products'), $imageName);
+            $product->image = 'images/products/' . $imageName;
+        }
+    
+        $product->save();
+    
+        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được cập nhật thành công.');
+    } // <-- Đóng hàm tại đây
+    
 
     /**
      * Remove the specified resource from storage.
@@ -73,9 +142,9 @@ class ProductsController extends Controller
     {
         try {
             $product->delete();
-            return redirect()->route('products.index')->with('success', 'Sản phẩm đã được xóa thành công.');
+            return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được xóa thành công.');
         } catch (\Exception $e) {
-            return redirect()->route('products.index')->with('error', 'Có lỗi xảy ra khi xóa sản phẩm.');
+            return redirect()->route('admin.products.index')->with('error', 'Có lỗi xảy ra khi xóa sản phẩm.');
         }
     }
 }

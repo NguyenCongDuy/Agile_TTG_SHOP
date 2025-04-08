@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('client');
+    return view('client.home');
 })->middleware(['auth', 'verified'])->name('client');
 
 Route::middleware('auth')->group(function () {
@@ -74,8 +74,12 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Product Routes
     Route::get('/product', [ProductsController::class, 'index'])->name('admin.products.index');
     Route::get('/product/create', [ProductsController::class, 'create'])->name('admin.products.create');
-    Route::get('/product/inventory', [ProductsController::class, 'inventory'])->name('admin.products.inventory');
+    Route::post('/product', [ProductsController::class, 'store'])->name('admin.products.store');
+    Route::get('/product/{product}', [ProductsController::class, 'show'])->name('admin.products.show');
+    Route::get('/product/{product}/edit', [ProductsController::class, 'edit'])->name('admin.products.edit');
+    Route::put('/product/{product}', [ProductsController::class, 'update'])->name('admin.products.update');
     Route::delete('/product/{product}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
+    Route::get('/product/inventory', [ProductsController::class, 'inventory'])->name('admin.products.inventory');
 
     // Category Routes
     Route::get('/category', [CategoriesController::class, 'index'])->name('admin.categories.index');

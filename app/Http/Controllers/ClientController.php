@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,7 @@ class ClientController extends Controller
     public function home()
     {
         $categories  = Category::where('is_featured', true)->take(3)->get();
-        $products = Product::where('is_featured', true)->take(8)->get();
+        $products = Products::where('is_featured', true)->take(8)->get();
         
         return view('client.home', compact('categories', 'products'));
     }
@@ -26,7 +27,7 @@ class ClientController extends Controller
      */
     public function products()
     {
-        $products = Product::paginate(12);
+        $products = Products::paginate(12);
         return view('client.products', compact('products'));
     }
 
@@ -35,8 +36,8 @@ class ClientController extends Controller
      */
     public function product($slug)
     {
-        $product = Product::where('slug', $slug)->firstOrFail();
-        $relatedProducts = Product::where('category_id', $product->category_id)
+        $product = Products::where('slug', $slug)->firstOrFail();
+        $relatedProducts = Products::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
             ->get();
@@ -59,7 +60,7 @@ class ClientController extends Controller
     public function category($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-        $products = Product::where('category_id', $category->id)->paginate(12);
+        $products = Products::where('category_id', $category->id)->paginate(12);
         
         return view('client.category', compact('category', 'products'));
     }
@@ -70,7 +71,7 @@ class ClientController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-        $products = Product::where('name', 'like', "%{$query}%")
+        $products = Products::where('name', 'like', "%{$query}%")
             ->orWhere('description', 'like', "%{$query}%")
             ->paginate(12);
             
@@ -91,7 +92,7 @@ class ClientController extends Controller
      */
     public function addToCart(Request $request)
     {
-        $product = Product::findOrFail($request->product_id);
+        $product = Products::findOrFail($request->product_id);
         $cart = session()->get('cart', []);
         
         if(isset($cart[$product->id])) {
