@@ -81,6 +81,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/category', [CategoriesController::class, 'index'])->name('admin.categories.index');
     Route::get('/category/create', [CategoriesController::class, 'create'])->name('admin.categories.create');
     Route::post('/category', [CategoriesController::class, 'store'])->name('admin.categories.store');
+    Route::get('/category/{category}/edit', [CategoriesController::class, 'edit'])->name('admin.categories.edit');
+    Route::put('/category/{category}', [CategoriesController::class, 'update'])->name('admin.categories.update');
+    Route::delete('/category/{category}', [CategoriesController::class, 'destroy'])->name('admin.categories.destroy');
 
     // User Routes
     Route::get('/users', [UsersController::class, 'index'])->name('admin.users.index');

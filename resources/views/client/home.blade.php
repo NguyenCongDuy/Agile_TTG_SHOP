@@ -18,7 +18,7 @@
                 <a href="{{ route('client.products') }}" class="btn btn-primary btn-lg">Shop Now</a>
             </div>
             <div class="col-md-6">
-                <img src="{{ asset('images/hero-image.jpg') }}" alt="Hero Image" class="img-fluid rounded">
+                <img src="{{ asset('dist/assets/img/1732092445z6051770101395_1dd7b13720e867422750849df651dcbf.jpg') }}" alt="Hero Image" class="img-fluid rounded">
             </div>
         </div>
     </div>

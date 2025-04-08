@@ -103,5 +103,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(ContactSeeder::class);
+
+        $this->call([
+            CategorySeeder::class,
+        ]);
     }
 }

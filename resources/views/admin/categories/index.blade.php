@@ -20,34 +20,55 @@
                                 <th>ID</th>
                                 <th>Tên danh mục</th>
                                 <th>Mô tả</th>
+                                <th>Hình ảnh</th>
                                 <th>Số sản phẩm</th>
+                                <th>Nổi bật</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($categories as $category)
                             <tr>
-                                <td>1</td>
-                                <td>Điện thoại</td>
-                                <td>Danh mục điện thoại di động</td>
-                                <td>50</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
+                                <td>{{ $category->id }}</td>
+                                <td>{{ $category->name }}</td>
+                                <td>{{ $category->description }}</td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm">Sửa</button>
-                                    <button class="btn btn-danger btn-sm">Xóa</button>
+                                    @if($category->image)
+                                        <img src="{{ asset($category->image) }}" alt="{{ $category->name }}" style="max-width: 50px;">
+                                    @else
+                                        <span class="text-muted">Không có ảnh</span>
+                                    @endif
+                                </td>
+                                <td>{{ $category->products_count }}</td>
+                                <td>
+                                    @if($category->is_featured)
+                                        <span class="badge bg-success">Có</span>
+                                    @else
+                                        <span class="badge bg-secondary">Không</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($category->status)
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    @else
+                                        <span class="badge bg-danger">Không hoạt động</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+                                    <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Laptop</td>
-                                <td>Danh mục máy tính xách tay</td>
-                                <td>30</td>
-                                <td><span class="badge bg-success">Hoạt động</span></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm">Sửa</button>
-                                    <button class="btn btn-danger btn-sm">Xóa</button>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

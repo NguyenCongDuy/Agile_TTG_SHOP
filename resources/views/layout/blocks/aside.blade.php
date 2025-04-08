@@ -2,7 +2,7 @@
   <!--begin::Sidebar Brand-->
   <div class="sidebar-brand">
     <!--begin::Brand Link-->
-    <a href="{{ route('dashboard') }}" class="brand-link">
+    <a href="{{ route('admin.home') }}" class="brand-link">
       <!--begin::Brand Image-->
       <img
         src="{{ asset('assets/img/logo.png') }}"
