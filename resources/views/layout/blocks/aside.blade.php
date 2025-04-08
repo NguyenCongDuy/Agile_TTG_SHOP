@@ -144,13 +144,33 @@
                 <p>Thêm người dùng</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{{ route('admin.users.roles') }}" class="nav-link">
+            {{-- <li class="nav-item">
+              <a href="{{ route('admin.users.roles', ['user' => $user->id])) }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Phân quyền</p>
               </a>
-            </li>
+            </li> --}}
           </ul>
+        </li>
+
+        <!-- Client Page -->
+        <li class="nav-item">
+          <a href="{{ route('client.home') }}" class="nav-link">
+            <i class="nav-icon bi bi-house"></i>
+            <p>Về Trang Client</p>
+          </a>
+        </li>
+
+        <!-- Logout -->
+        <li class="nav-item">
+          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+            <input type="hidden" name="redirect_to" value="{{ route('login') }}">
+          </form>
+          <a href="#" class="nav-link" onclick="event.preventDefault(); if(confirm('Bạn có chắc chắn muốn đăng xuất?')) { document.getElementById('logout-form').submit(); }">
+            <i class="nav-icon bi bi-box-arrow-right"></i>
+            <p>Đăng Xuất</p>
+          </a>
         </li>
       </ul>
       <!--end::Sidebar Menu-->

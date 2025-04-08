@@ -1,6 +1,11 @@
 @extends('layout.AdminLayout')
 
 @section('content')
+{{-- @if(auth()->check())
+    <div class="alert alert-info">
+        Current user role: {{ auth()->user()->role }}
+    </div>
+@endif --}}
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">

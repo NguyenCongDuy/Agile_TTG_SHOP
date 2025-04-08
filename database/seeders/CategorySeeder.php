@@ -11,8 +11,8 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Electronics',
-                'description' => 'Latest electronic devices and gadgets',
+                'name' => 'PC GAMMING',
+                'description' => 'Cấu hình cao chơi game thích',
                 'image' => 'images/categories/electronics.jpg',
                 'is_featured' => true,
                 'status' => true

@@ -64,8 +64,9 @@ Route::prefix('client')->group(function () {
     Route::post('/contact', [ClientController::class, 'sendContact'])->name('client.contact.send');
 });
 
+
 // Admin Routes
-Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     // Dashboard
     Route::get('/', function () {
         return view('admin.home');
@@ -80,7 +81,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::put('/product/{product}', [ProductsController::class, 'update'])->name('admin.products.update');
     Route::delete('/product/{product}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
     Route::get('/product/inventory', [ProductsController::class, 'inventory'])->name('admin.products.inventory');
-
+    
     // Category Routes
     Route::get('/category', [CategoriesController::class, 'index'])->name('admin.categories.index');
     Route::get('/category/create', [CategoriesController::class, 'create'])->name('admin.categories.create');
@@ -93,7 +94,11 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/users', [UsersController::class, 'index'])->name('admin.users.index');
     Route::get('/users/create', [UsersController::class, 'create'])->name('admin.users.create');
     Route::post('/users', [UsersController::class, 'store'])->name('admin.users.store');
-    Route::get('/users/roles', [UsersController::class, 'roles'])->name('admin.users.roles');
+    Route::get('/users/{user}/edit', [UsersController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{user}', [UsersController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('/users/{user}/roles', [UsersController::class, 'roles'])->name('admin.users.roles');
+    Route::put('/users/{user}/roles', [UsersController::class, 'updateRoles'])->name('admin.users.updateRoles');
 
     // Statistics Routes
     Route::get('/statistics/overview', [StatisticsController::class, 'overview'])->name('admin.statistics.overview');
@@ -101,4 +106,4 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/statistics/products', [StatisticsController::class, 'products'])->name('admin.statistics.products');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
