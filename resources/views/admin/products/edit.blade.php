@@ -36,7 +36,7 @@
 
             <div class="mb-3">
                 <label for="quantity">Số lượng</label>
-                <input type="number" name="stock" class="form-control" value="{{ old('quantity', $product->quantity) }}" min="0" required>
+                <input type="number" name="stock" class="form-control" value="{{ old('stock', $product->stock) }}" min="0" required>
             </div>
 
             <div class="mb-3">
