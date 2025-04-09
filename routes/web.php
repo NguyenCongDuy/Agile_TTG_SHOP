@@ -65,6 +65,7 @@ Route::prefix('client')->group(function () {
 });
 
 
+
 // Admin Routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     // Dashboard

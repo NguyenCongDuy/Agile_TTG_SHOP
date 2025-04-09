@@ -48,13 +48,13 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('client.home');
+        return Redirect::to('client.home');
     }
 }

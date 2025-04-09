@@ -23,22 +23,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $request->authenticate();
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $request->session()->regenerate();
+        $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.home'));
-        }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**
@@ -52,6 +43,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('client')->with('success', 'Đăng xuất thành công.');
+        return redirect('client');
     }
 }
