@@ -22,10 +22,6 @@
                     </li>
                 </ul>
 
-                <form class="d-flex me-3" action="{{ route('client.search') }}" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Search products...">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
 
                 <div class="d-flex">
                     <a href="{{ route('client.cart') }}" class="btn btn-outline-primary me-2">

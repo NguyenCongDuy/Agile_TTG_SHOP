@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductAttributeController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,8 +24,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('client.home');
-})->middleware(['auth', 'verified'])->name('client');
+    return redirect()->route('client.home');
+})->name('client');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -93,7 +95,34 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::put('/product/{product}', [ProductsController::class, 'update'])->name('admin.products.update');
     Route::delete('/product/{product}', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
     Route::get('/product/inventory', [ProductsController::class, 'inventory'])->name('admin.products.inventory');
-    
+
+    // Product Attributes Routes
+    Route::get('/product/{product}/attributes', [ProductsController::class, 'attributes'])->name('admin.products.attributes');
+    Route::post('/product/{product}/attributes', [ProductsController::class, 'updateAttributes'])->name('admin.products.attributes.update');
+
+    // Product Variants Routes
+    Route::get('/product/{product}/variants', [ProductVariantController::class, 'index'])->name('admin.products.variants.index');
+    Route::get('/product/{product}/variants/create', [ProductVariantController::class, 'create'])->name('admin.products.variants.create');
+    Route::post('/product/{product}/variants', [ProductVariantController::class, 'store'])->name('admin.products.variants.store');
+    Route::get('/product/{product}/variants/{variant}/edit', [ProductVariantController::class, 'edit'])->name('admin.products.variants.edit');
+    Route::put('/product/{product}/variants/{variant}', [ProductVariantController::class, 'update'])->name('admin.products.variants.update');
+    Route::delete('/product/{product}/variants/{variant}', [ProductVariantController::class, 'destroy'])->name('admin.products.variants.destroy');
+
+    // Product Attribute Management Routes
+    Route::get('/attributes', [ProductAttributeController::class, 'index'])->name('admin.attributes.index');
+    Route::get('/attributes/create', [ProductAttributeController::class, 'create'])->name('admin.attributes.create');
+    Route::post('/attributes', [ProductAttributeController::class, 'store'])->name('admin.attributes.store');
+    Route::get('/attributes/{attribute}/edit', [ProductAttributeController::class, 'edit'])->name('admin.attributes.edit');
+    Route::put('/attributes/{attribute}', [ProductAttributeController::class, 'update'])->name('admin.attributes.update');
+    Route::delete('/attributes/{attribute}', [ProductAttributeController::class, 'destroy'])->name('admin.attributes.destroy');
+    Route::post('/attributes/positions', [ProductAttributeController::class, 'updatePositions'])->name('admin.attributes.positions');
+
+    // Product Attribute Values Routes
+    Route::get('/attributes/{attribute}/values', [ProductAttributeController::class, 'values'])->name('admin.attributes.values');
+    Route::post('/attributes/{attribute}/values', [ProductAttributeController::class, 'storeValue'])->name('admin.attributes.values.store');
+    Route::put('/attribute-values/{value}', [ProductAttributeController::class, 'updateValue'])->name('admin.attribute-values.update');
+    Route::delete('/attribute-values/{value}', [ProductAttributeController::class, 'destroyValue'])->name('admin.attribute-values.destroy');
+
     // Category Routes
     Route::get('/category', [CategoriesController::class, 'index'])->name('admin.categories.index');
     Route::get('/category/create', [CategoriesController::class, 'create'])->name('admin.categories.create');
@@ -120,6 +149,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
 
 // Admin Order Routes
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])->name('orders.dashboard');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');

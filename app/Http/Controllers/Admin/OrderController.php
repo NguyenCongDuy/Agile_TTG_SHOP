@@ -7,9 +7,35 @@ use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+    public function dashboard()
+    {
+        // Get order statistics
+        $totalOrders = Order::count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $processingOrders = Order::where('status', 'processing')->count();
+        $completedOrders = Order::where('status', 'completed')->count();
+
+        // Get revenue statistics
+        $totalRevenue = Order::where('status', '!=', 'cancelled')->sum('total_amount');
+        $paidRevenue = Order::whereHas('payment', function($query) {
+            $query->where('status', 'paid');
+        })->sum('total_amount');
+
+        // Get recent orders
+        $recentOrders = Order::with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('admin.orders.dashboard', compact(
+            'totalOrders', 'pendingOrders', 'processingOrders', 'completedOrders',
+            'totalRevenue', 'paidRevenue', 'recentOrders'
+        ));
+    }
     public function index(Request $request)
     {
         $query = Order::with(['user', 'payment']);
@@ -41,7 +67,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['user', 'payment', 'orderItems.product']);
+        $order->load(['user', 'payment', 'orderDetails.product']);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -53,11 +79,24 @@ class OrderController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
+            // Get old status for comparison
+            $oldStatus = $order->status;
+
+            // Update order status
             $order->update(['status' => $request->status]);
-            
+
+            // Add notification logic here if needed
+            // For example, you could send an email to the customer
+            // or create a notification record in the database
+
             DB::commit();
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công',
+                'old_status' => $oldStatus,
+                'new_status' => $request->status
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -72,19 +111,31 @@ class OrderController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
+            // Get old payment status for comparison
+            $oldStatus = $order->payment ? $order->payment->status : null;
+
             if (!$order->payment) {
                 $order->payment()->create([
                     'status' => $request->status,
                     'amount' => $order->total_amount,
-                    'payment_method' => 'bank_transfer'
+                    'method' => $order->payment_method ?? 'bank_transfer'
                 ]);
             } else {
                 $order->payment->update(['status' => $request->status]);
             }
-            
+
+            // Add notification logic here if needed
+            // For example, you could send an email to the customer
+            // or create a notification record in the database
+
             DB::commit();
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Trạng thái thanh toán đã được cập nhật thành công',
+                'old_status' => $oldStatus,
+                'new_status' => $request->status
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -95,21 +146,24 @@ class OrderController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             // Delete related records
-            $order->orderItems()->delete();
+            $order->orderDetails()->delete();
             if ($order->payment) {
                 $order->payment()->delete();
             }
-            
+
             // Delete the order
             $order->delete();
-            
+
             DB::commit();
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đơn hàng đã được xóa thành công'
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
-} 
+}

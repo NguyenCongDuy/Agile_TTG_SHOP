@@ -19,6 +19,6 @@ class CheckAdmin
             return $next($request);
         }
 
-        return redirect()->route('client.home')->with('error', 'Bạn không có quyền truy cập vào trang quản trị.');
+        return redirect()->route('client.home')->with('error', 'Bạn không có quyền truy cập vào trang quản trị. Chỉ tài khoản admin (role = 1) mới có thể truy cập.');
     }
-} 
+}

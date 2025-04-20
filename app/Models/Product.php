@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Products extends Model
+class Product extends Model
 {
     use HasFactory;
 
@@ -54,7 +54,7 @@ class Products extends Model
      */
     public function variants()
     {
-        return $this->hasMany(ProductVariant::class, 'product_id');
+        return $this->hasMany(ProductVariant::class);
     }
 
     /**
@@ -62,7 +62,7 @@ class Products extends Model
      */
     public function defaultVariant()
     {
-        return $this->hasOne(ProductVariant::class, 'product_id')->where('is_default', true);
+        return $this->hasOne(ProductVariant::class)->where('is_default', true);
     }
 
     /**

@@ -8,6 +8,8 @@ use App\Http\Requests\StoreProductsRequest;
 use App\Http\Requests\UpdateProductsRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductAttribute;
+use App\Models\ProductAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -109,7 +111,7 @@ class ProductsController extends Controller
             'is_featured' => 'boolean',
             'status' => 'boolean'
         ]);
-    
+
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
@@ -117,23 +119,23 @@ class ProductsController extends Controller
         $product->category_id = $request->category_id;
         $product->is_featured = $request->is_featured ?? false;
         $product->status = $request->status ?? true;
-    
+
         if ($request->hasFile('image')) {
             if ($product->image && file_exists(public_path($product->image))) {
                 unlink(public_path($product->image));
             }
-    
+
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('images/products'), $imageName);
             $product->image = 'images/products/' . $imageName;
         }
-    
+
         $product->save();
-    
+
         return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được cập nhật thành công.');
     } // <-- Đóng hàm tại đây
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -144,7 +146,35 @@ class ProductsController extends Controller
             $product->delete();
             return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được xóa thành công.');
         } catch (\Exception $e) {
-            return redirect()->route('admin.products.index')->with('error', 'Có lỗi xảy ra khi xóa sản phẩm.');
+            return redirect()->route('admin.products.index')->with('error', 'Có lỗi xảy ra khi xóa sản phẩm: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Show the attributes for a product.
+     */
+    public function attributes(Products $product)
+    {
+        $allAttributes = ProductAttribute::with('values')->orderBy('position')->get();
+        $productAttributes = $product->attributes()->pluck('product_attribute_id')->toArray();
+
+        return view('admin.products.attributes', compact('product', 'allAttributes', 'productAttributes'));
+    }
+
+    /**
+     * Update the attributes for a product.
+     */
+    public function updateAttributes(Request $request, Products $product)
+    {
+        $request->validate([
+            'attributes' => 'nullable|array',
+            'attributes.*' => 'exists:product_attributes,id',
+        ]);
+
+        // Cập nhật thuộc tính sản phẩm
+        $product->attributes()->sync($request->attributes ?? []);
+
+        return redirect()->route('admin.products.attributes', $product)
+            ->with('success', 'Thuộc tính sản phẩm đã được cập nhật thành công.');
     }
 }

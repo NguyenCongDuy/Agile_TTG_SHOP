@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.home'));
+            return redirect()->intended(RouteServiceProvider::HOME);
         }
 
         return back()->withErrors([

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\Products;
-use App\Models\User;
+use App\Models\Product;
 use App\Models\OrderDetail;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ClientController extends Controller
 {
@@ -22,18 +21,66 @@ class ClientController extends Controller
     public function home()
     {
         $categories  = Category::where('is_featured', true)->take(3)->get();
-        $products = Products::where('is_featured', true)->take(8)->get();
-        
+        $products = Product::where('is_featured', true)->take(8)->get();
+
         return view('client.home', compact('categories', 'products'));
     }
 
     /**
      * Display all products
      */
-    public function products()
+    public function products(Request $request)
     {
-        $products = Products::paginate(12);
-        return view('client.products', compact('products'));
+        // Base query
+        $query = Product::query();
+
+        // Apply category filter
+        if ($request->has('categories') && !in_array('all', $request->categories)) {
+            $query->whereIn('category_id', $request->categories);
+        }
+
+        // Apply price filter
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Apply availability filter
+        if ($request->has('availability') && $request->availability == 'in_stock') {
+            $query->where('stock', '>', 0);
+        }
+
+        // Apply sorting
+        switch ($request->sort_by) {
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc'); // newest by default
+        }
+
+        // Get products with pagination
+        $products = $query->paginate(12);
+
+        // Get categories for filter
+        $categories = Category::all();
+
+        // Get featured products for sidebar
+        $featuredProducts = Product::where('is_featured', true)->take(5)->get();
+
+        return view('client.products', compact('products', 'categories', 'featuredProducts'));
     }
 
     /**
@@ -41,12 +88,34 @@ class ClientController extends Controller
      */
     public function product($slug)
     {
-        $product = Products::where('slug', $slug)->firstOrFail();
-        $relatedProducts = Products::where('category_id', $product->category_id)
+        $product = Product::where('slug', $slug)->firstOrFail();
+
+        // Check if product has variants property
+        if (Schema::hasTable('product_variants')) {
+            $hasVariants = DB::table('product_variants')
+                ->where('product_id', $product->id)
+                ->exists();
+            $product->setAttribute('has_variants', $hasVariants);
+
+            if ($hasVariants) {
+                // Load variants if they exist
+                $variants = DB::table('product_variants')
+                    ->where('product_id', $product->id)
+                    ->get();
+                $product->setAttribute('variants', $variants);
+            }
+        } else {
+            $product->setAttribute('has_variants', false);
+        }
+
+        // Set is_in_stock attribute
+        $product->setAttribute('is_in_stock', $product->stock > 0);
+
+        $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
             ->get();
-            
+
         return view('client.product', compact('product', 'relatedProducts'));
     }
 
@@ -65,8 +134,8 @@ class ClientController extends Controller
     public function category($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-        $products = Products::where('category_id', $category->id)->paginate(12);
-        
+        $products = Product::where('category_id', $category->id)->paginate(12);
+
         return view('client.category', compact('category', 'products'));
     }
 
@@ -76,10 +145,10 @@ class ClientController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-        $products = Products::where('name', 'like', "%{$query}%")
+        $products = Product::where('name', 'like', "%{$query}%")
             ->orWhere('description', 'like', "%{$query}%")
             ->paginate(12);
-            
+
         return view('client.search', compact('products', 'query'));
     }
 
@@ -97,9 +166,9 @@ class ClientController extends Controller
      */
     public function addToCart(Request $request)
     {
-        $product = Products::findOrFail($request->product_id);
+        $product = Product::findOrFail($request->product_id);
         $cart = session()->get('cart', []);
-        
+
         if(isset($cart[$product->id])) {
             $cart[$product->id]['quantity']++;
         } else {
@@ -110,7 +179,7 @@ class ClientController extends Controller
                 "image" => $product->image
             ];
         }
-        
+
         session()->put('cart', $cart);
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
@@ -139,7 +208,7 @@ class ClientController extends Controller
         if (isset($cart[$id])) {
             unset($cart[$id]);
             session()->put('cart', $cart);
-            
+
             // Calculate new total
             $total = 0;
             foreach ($cart as $details) {
@@ -211,10 +280,10 @@ class ClientController extends Controller
     /**
      * Display order details
      */
-    public function orderDetails($id)
+    public function orderDetail(Order $order)
     {
-        $order = Order::with(['orderDetails.product', 'payment'])->findOrFail($id);
-        
+        $order->load(['orderDetails.product', 'payment']);
+
         // Check if the order belongs to the authenticated user
         if ($order->user_id != auth()->id()) {
             abort(403);
@@ -305,61 +374,82 @@ class ClientController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            'payment_method' => 'required|in:cod,bank_transfer',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'zip' => 'required|string|max:20',
+            'payment_method' => 'required|in:cod,bank_transfer,credit_card,paypal',
             'notes' => 'nullable|string|max:1000'
         ]);
 
-        // Calculate total amount
-        $total_amount = 0;
-        foreach (session('cart') as $details) {
-            $total_amount += $details['price'] * $details['quantity'];
-        }
+        try {
+            DB::beginTransaction();
 
-        // Create order
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'shipping_address' => $request->address,
-            'billing_address' => $request->address,
-            'payment_method' => $request->payment_method,
-            'notes' => $request->notes,
-            'status' => 'pending',
-            'total_amount' => $total_amount
-        ]);
+            // Calculate total amount
+            $subtotal = 0;
+            foreach (session('cart') as $details) {
+                $subtotal += $details['price'] * $details['quantity'];
+            }
 
-        // Create order details
-        foreach (session('cart') as $id => $details) {
-            OrderDetail::create([
-                'order_id' => $order->id,
-                'product_id' => $id,
-                'quantity' => $details['quantity'],
-                'price' => $details['price']
+            // Add tax (10%)
+            $tax = $subtotal * 0.1;
+            $total_amount = $subtotal + $tax;
+
+            // Combine address information
+            $fullAddress = $request->address . ', ' . $request->city . ', ' . $request->state . ' ' . $request->zip;
+
+            // Create order
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'shipping_address' => $fullAddress,
+                'billing_address' => $fullAddress,
+                'payment_method' => $request->payment_method,
+                'notes' => $request->notes,
+                'status' => 'pending',
+                'total_amount' => $total_amount
             ]);
+
+            // Create order details
+            foreach (session('cart') as $id => $details) {
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'product_id' => $id,
+                    'quantity' => $details['quantity'],
+                    'price' => $details['price']
+                ]);
+
+                // Update product stock (if implemented)
+                // $product = Product::find($id);
+                // $product->decrement('stock', $details['quantity']);
+            }
+
+            // Create payment
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'method' => $request->payment_method,
+                'status' => $request->payment_method == 'cod' ? 'pending' : 'unpaid',
+                'amount' => $total_amount
+            ]);
+
+            // Clear cart
+            session()->forget('cart');
+
+            DB::commit();
+
+            // Load order with payment for order success page
+            $order->load('payment');
+
+            // Redirect to order success page
+            return view('client.order-success', compact('order'));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi xử lý đơn hàng: ' . $e->getMessage());
         }
-
-        // Create payment
-        Payment::create([
-            'order_id' => $order->id,
-            'method' => $request->payment_method,
-            'status' => $request->payment_method == 'cod' ? 'pending' : 'unpaid',
-            'amount' => $total_amount
-        ]);
-
-        // Clear cart
-        session()->forget('cart');
-
-        return redirect()->route('client.orders')->with('success', 'Đặt hàng thành công!');
     }
 
-    public function orderDetail(Order $order)
-    {
-        if ($order->user_id != auth()->id()) {
-            abort(403);
-        }
 
-        return view('client.order-detail', compact('order'));
-    }
 
     public function cancelOrder(Order $order)
     {
@@ -398,4 +488,4 @@ class ClientController extends Controller
             ], 500);
         }
     }
-} 
+}

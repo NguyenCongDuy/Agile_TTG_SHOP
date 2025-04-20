@@ -67,18 +67,54 @@
         </li>
 
         <!-- Product Management -->
+        <!-- Product Management -->
         <li class="nav-item">
-          <a class="nav-link {{ request()->routeIs('admin.products*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
-            <i class="fas fa-box"></i>
-            <span>Quản lý sản phẩm</span>
+          <a href="#" class="nav-link {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-box-seam"></i>
+            <p>
+              Quản lý sản phẩm
+              <i class="nav-arrow bi bi-chevron-right"></i>
+            </p>
           </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.index') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-list-check"></i>
+                <p>Danh sách sản phẩm</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('admin.products.create') }}" class="nav-link {{ request()->routeIs('admin.products.create') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-plus-circle"></i>
+                <p>Thêm sản phẩm mới</p>
+              </a>
+            </li>
+          </ul>
         </li>
 
+        <!-- Order Management -->
         <li class="nav-item">
-          <a class="nav-link {{ request()->routeIs('admin.orders*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Quản lý đơn hàng</span>
+          <a href="#" class="nav-link {{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-cart-check"></i>
+            <p>
+              Quản lý đơn hàng
+              <i class="nav-arrow bi bi-chevron-right"></i>
+            </p>
           </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{ route('admin.orders.dashboard') }}" class="nav-link {{ request()->routeIs('admin.orders.dashboard') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-speedometer2"></i>
+                <p>Tổng quan đơn hàng</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.index') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-list-ul"></i>
+                <p>Danh sách đơn hàng</p>
+              </a>
+            </li>
+          </ul>
         </li>
 
         <!-- Category Management -->
@@ -90,7 +126,7 @@
               <i class="nav-arrow bi bi-chevron-right"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
+          {{-- <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="{{ route('admin.categories.index') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
@@ -103,7 +139,7 @@
                 <p>Thêm danh mục</p>
               </a>
             </li>
-          </ul>
+          </ul> --}}
         </li>
 
         <!-- User Management -->
