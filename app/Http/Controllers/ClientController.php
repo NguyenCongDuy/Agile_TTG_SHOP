@@ -369,6 +369,15 @@ class ClientController extends Controller
     }
 
     /**
+     * Display order details (alias for orderDetail)
+     */
+    public function orderDetails($id)
+    {
+        $order = Order::findOrFail($id);
+        return $this->orderDetail($order);
+    }
+
+    /**
      * Display contact page
      */
     public function contact()
@@ -564,6 +573,107 @@ class ClientController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi hủy đơn hàng'
+            ], 500);
+        }
+    }
+
+    /**
+     * Confirm order completion (only for shipping orders)
+     */
+    public function confirmOrder(Order $order)
+    {
+        // Check if order belongs to authenticated user
+        if ($order->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn không có quyền xác nhận đơn hàng này'
+            ], 403);
+        }
+
+        // Check if order can be confirmed (only shipping orders)
+        if ($order->status !== 'shipping') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chỉ có thể xác nhận đơn hàng đang giao'
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $order->update(['status' => 'completed']);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đơn hàng đã được xác nhận hoàn thành'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi xác nhận đơn hàng'
+            ], 500);
+        }
+    }
+
+    /**
+     * Rate an order
+     */
+    public function rateOrder(Request $request, Order $order)
+    {
+        // Check if order belongs to authenticated user
+        if ($order->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn không có quyền đánh giá đơn hàng này'
+            ], 403);
+        }
+
+        // Check if order is completed
+        if ($order->status !== 'completed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chỉ có thể đánh giá đơn hàng đã hoàn thành'
+            ], 400);
+        }
+
+        // Check if order has already been rated
+        if ($order->rating) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng này đã được đánh giá trước đó'
+            ], 400);
+        }
+
+        // Validate request
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000'
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Create rating
+            $order->rating()->create([
+                'user_id' => auth()->id(),
+                'rating' => $request->rating,
+                'comment' => $request->comment
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cảm ơn bạn đã đánh giá đơn hàng!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi đánh giá đơn hàng'
             ], 500);
         }
     }

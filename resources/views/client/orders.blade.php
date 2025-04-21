@@ -103,7 +103,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('client.orders.detail', $order->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('client.orders.detail', ['id' => $order->id]) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i> Chi tiết
                                 </a>
                                 @if($order->status === 'pending')
@@ -136,7 +136,7 @@
         // Cancel order functionality
         $('.cancel-order').click(function() {
             const orderId = $(this).data('id');
-            
+
             if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
                 $.ajax({
                     url: `/client/orders/${orderId}/cancel`,
@@ -162,4 +162,4 @@
     });
 </script>
 @endpush
-@endsection 
+@endsection

@@ -22,7 +22,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/client.css') }}">
-
+    <script type="module">import "https://cdn.redai.vn/live-chat/main.js"; window.RedAI.init({ botId: "943-2864-ldDkFVeJFoXxoUU3OHV2D0td-1146"}); </script>
     <!-- Page Specific Styles -->
     @stack('styles')
 </head>

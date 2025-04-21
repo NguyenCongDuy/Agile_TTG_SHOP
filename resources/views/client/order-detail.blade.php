@@ -4,9 +4,51 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">Chi tiết đơn hàng #{{ $order->id }}</h1>
-        <a href="{{ route('client.orders') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Quay lại
-        </a>
+        <div class="d-flex gap-2">
+            @if($order->status === 'shipping')
+            <button id="confirm-order-btn" class="btn btn-success">
+                <i class="fas fa-check-circle me-2"></i>Xác nhận đã nhận hàng
+            </button>
+            @endif
+            <a href="{{ route('client.orders') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Status Timeline -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="order-status-item {{ $order->status == 'pending' || $order->status == 'processing' || $order->status == 'shipping' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                    <div class="status-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="status-text">Chờ xử lý</div>
+                </div>
+                <div class="order-status-connector {{ $order->status == 'processing' || $order->status == 'shipping' || $order->status == 'completed' ? 'active' : '' }}"></div>
+                <div class="order-status-item {{ $order->status == 'processing' || $order->status == 'shipping' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                    <div class="status-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="status-text">Đang xử lý</div>
+                </div>
+                <div class="order-status-connector {{ $order->status == 'shipping' || $order->status == 'completed' ? 'active' : '' }}"></div>
+                <div class="order-status-item {{ $order->status == 'shipping' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                    <div class="status-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="status-text">Đang giao</div>
+                </div>
+                <div class="order-status-connector {{ $order->status == 'completed' ? 'active' : '' }}"></div>
+                <div class="order-status-item {{ $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                    <div class="status-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="status-text">Hoàn thành</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -137,5 +179,217 @@
             </div>
         </div>
     </div>
+
+    @if($order->status === 'completed' && !$order->rating)
+    <!-- Rating Section -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Đánh giá đơn hàng</h5>
+            <form id="rating-form">
+                <div class="mb-3">
+                    <label class="form-label">Đánh giá của bạn</label>
+                    <div class="rating-stars mb-3">
+                        <i class="fas fa-star rating-star" data-rating="1"></i>
+                        <i class="fas fa-star rating-star" data-rating="2"></i>
+                        <i class="fas fa-star rating-star" data-rating="3"></i>
+                        <i class="fas fa-star rating-star" data-rating="4"></i>
+                        <i class="fas fa-star rating-star" data-rating="5"></i>
+                        <input type="hidden" name="rating" id="selected-rating" value="5">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Nhận xét (không bắt buộc)</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Chia sẻ ý kiến của bạn về đơn hàng này"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                </button>
+            </form>
+        </div>
+    </div>
+    @elseif($order->rating)
+    <!-- Existing Rating -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Đánh giá của bạn</h5>
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-2">
+                    <span class="badge bg-primary rounded-pill p-2">{{ $order->rating->rating }}/5</span>
+                </div>
+                <div class="rating-stars">
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="fas fa-star {{ $i <= $order->rating->rating ? 'text-warning' : 'text-muted' }}"></i>
+                    @endfor
+                </div>
+            </div>
+            @if($order->rating->comment)
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <p class="card-text">{{ $order->rating->comment }}</p>
+                        <small class="text-muted">{{ $order->rating->created_at->format('d/m/Y H:i') }}</small>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    @endif
 </div>
-@endsection 
+
+@push('styles')
+<style>
+    /* Order Status Timeline */
+    .order-status-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .status-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        border: 2px solid #dee2e6;
+        font-size: 16px;
+        color: #6c757d;
+    }
+
+    .order-status-item.active .status-icon {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+    .order-status-item.cancelled .status-icon {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+    }
+
+    .order-status-connector {
+        flex-grow: 1;
+        height: 3px;
+        background-color: #dee2e6;
+        margin-top: 20px;
+    }
+
+    .order-status-connector.active {
+        background-color: #0d6efd;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+        font-size: 24px;
+        color: #ccc;
+    }
+
+    .rating-stars .fa-star {
+        cursor: pointer;
+        margin-right: 5px;
+    }
+
+    .rating-stars .fa-star.active,
+    .rating-stars .fa-star.text-warning {
+        color: #ffc107;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Rating stars functionality
+        $('.rating-star').hover(function() {
+            var rating = $(this).data('rating');
+
+            // Reset all stars
+            $('.rating-star').removeClass('active');
+
+            // Highlight stars up to the hovered one
+            $('.rating-star').each(function() {
+                if ($(this).data('rating') <= rating) {
+                    $(this).addClass('active');
+                }
+            });
+        });
+
+        // Set initial rating (all stars active)
+        $('.rating-star').addClass('active');
+
+        // Handle click on stars
+        $('.rating-star').click(function() {
+            var rating = $(this).data('rating');
+            $('#selected-rating').val(rating);
+
+            // Update visual state
+            $('.rating-star').removeClass('active');
+            $('.rating-star').each(function() {
+                if ($(this).data('rating') <= rating) {
+                    $(this).addClass('active');
+                }
+            });
+        });
+
+        // Handle rating form submission
+        $('#rating-form').submit(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '{{ route("client.orders.rate", ["order" => $order->id]) }}',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    rating: $('#selected-rating').val(),
+                    comment: $('#comment').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message || 'Có lỗi xảy ra');
+                    }
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    alert(response?.message || 'Có lỗi xảy ra');
+                }
+            });
+        });
+
+        // Handle order confirmation
+        $('#confirm-order-btn').click(function() {
+            if (confirm('Bạn xác nhận đã nhận được hàng?')) {
+                $.ajax({
+                    url: '{{ route("client.orders.confirm", ["order" => $order->id]) }}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload();
+                        } else {
+                            alert(response.message || 'Có lỗi xảy ra');
+                        }
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON;
+                        alert(response?.message || 'Có lỗi xảy ra');
+                    }
+                });
+            }
+        });
+    });
+</script>
+@endpush
+@endsection

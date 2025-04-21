@@ -74,7 +74,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,processing,completed,cancelled'
+            'status' => 'required|in:pending,processing,shipping,completed,cancelled'
         ]);
 
         try {
@@ -82,9 +82,29 @@ class OrderController extends Controller
 
             // Get old status for comparison
             $oldStatus = $order->status;
+            $newStatus = $request->status;
+
+            // Validate status transitions
+            $validTransition = $this->validateStatusTransition($oldStatus, $newStatus);
+
+            if (!$validTransition['valid']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validTransition['message']
+                ], 400);
+            }
+
+            // Only allow admin to change to completed if the status is not already completed
+            // Completed status should be set by the customer
+            if ($newStatus === 'completed' && $oldStatus !== 'completed') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chỉ khách hàng mới có thể xác nhận hoàn thành đơn hàng'
+                ], 400);
+            }
 
             // Update order status
-            $order->update(['status' => $request->status]);
+            $order->update(['status' => $newStatus]);
 
             // Add notification logic here if needed
             // For example, you could send an email to the customer
@@ -95,12 +115,47 @@ class OrderController extends Controller
                 'success' => true,
                 'message' => 'Trạng thái đơn hàng đã được cập nhật thành công',
                 'old_status' => $oldStatus,
-                'new_status' => $request->status
+                'new_status' => $newStatus
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Validate order status transition
+     *
+     * @param string $oldStatus
+     * @param string $newStatus
+     * @return array
+     */
+    private function validateStatusTransition($oldStatus, $newStatus)
+    {
+        // Define valid transitions
+        $validTransitions = [
+            'pending' => ['processing', 'cancelled'],
+            'processing' => ['shipping', 'cancelled'],
+            'shipping' => ['completed', 'cancelled'],
+            'completed' => [], // No transitions from completed
+            'cancelled' => [] // No transitions from cancelled
+        ];
+
+        // Check if transition is valid
+        if (in_array($newStatus, $validTransitions[$oldStatus])) {
+            return ['valid' => true];
+        }
+
+        // If status is not changing, it's valid
+        if ($oldStatus === $newStatus) {
+            return ['valid' => true];
+        }
+
+        // Otherwise, transition is invalid
+        return [
+            'valid' => false,
+            'message' => "Không thể chuyển trạng thái từ '{$oldStatus}' sang '{$newStatus}'"
+        ];
     }
 
     public function updatePaymentStatus(Request $request, Order $order)

@@ -48,7 +48,7 @@
                     </div>
                     <h1 class="h3 mb-3 text-success">Đặt hàng thành công!</h1>
                     <p class="mb-4">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xác nhận và đang được xử lý.</p>
-                    
+
                     <div class="alert alert-light mb-4">
                         <div class="d-flex align-items-center mb-3">
                             <div class="me-3">
@@ -74,7 +74,7 @@
                                         {{ $order->payment && $order->payment->status == 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
                                     </span>
                                 </p>
-                                <p class="mb-1">Phương thức: 
+                                <p class="mb-1">Phương thức:
                                     @if($order->payment_method == 'cod')
                                         Thanh toán khi nhận hàng
                                     @elseif($order->payment_method == 'bank_transfer')
@@ -89,9 +89,9 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ route('client.orders.detail', $order->id) }}" class="btn btn-primary">
+                        <a href="{{ route('client.orders.detail', ['id' => $order->id]) }}" class="btn btn-primary">
                             <i class="bi bi-eye me-2"></i>Xem chi tiết đơn hàng
                         </a>
                         <a href="{{ route('client.products') }}" class="btn btn-outline-primary">
@@ -100,7 +100,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- What's Next -->
             <div class="card shadow mb-4">
                 <div class="card-header bg-white">
@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Need Help -->
             <div class="card shadow mb-4">
                 <div class="card-header bg-white">
@@ -182,12 +182,12 @@
     .checkout-progress .progress {
         margin-bottom: 15px;
     }
-    
+
     .checkout-step {
         text-align: center;
         width: 33.333%;
     }
-    
+
     .step-icon {
         width: 50px;
         height: 50px;
@@ -201,13 +201,13 @@
         font-size: 20px;
         color: #6c757d;
     }
-    
+
     .checkout-step.active .step-icon {
         background-color: #0d6efd;
         border-color: #0d6efd;
         color: white;
     }
-    
+
     .checkout-step.completed .step-icon {
         background-color: #198754;
         border-color: #198754;

@@ -76,8 +76,10 @@ Route::prefix('client')->name('client.')->group(function () {
         // Orders
         Route::prefix('orders')->group(function () {
             Route::get('/', [ClientController::class, 'orders'])->name('orders');
-            Route::get('/{id}', [ClientController::class, 'orderDetails'])->name('order.details');
+            Route::get('/{id}', [ClientController::class, 'orderDetails'])->name('orders.detail');
             Route::post('/{order}/cancel', [ClientController::class, 'cancelOrder'])->name('orders.cancel');
+            Route::post('/{order}/confirm', [ClientController::class, 'confirmOrder'])->name('orders.confirm');
+            Route::post('/{order}/rate', [ClientController::class, 'rateOrder'])->name('orders.rate');
         });
 
         // Checkout

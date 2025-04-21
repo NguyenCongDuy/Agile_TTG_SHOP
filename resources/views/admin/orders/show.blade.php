@@ -22,6 +22,11 @@
                         </a>
                     </li>
                     <li>
+                        <a class="dropdown-item update-status" href="#" data-status="shipping" data-id="{{ $order->id }}">
+                            <i class="bi bi-truck text-primary"></i> Chuyển sang đang giao
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item update-status" href="#" data-status="completed" data-id="{{ $order->id }}">
                             <i class="bi bi-check-circle text-success"></i> Đánh dấu hoàn thành
                         </a>
@@ -52,12 +57,19 @@
                     </div>
                     <div class="status-text">Chờ xử lý</div>
                 </div>
-                <div class="order-status-connector {{ $order->status == 'processing' || $order->status == 'completed' ? 'active' : '' }}"></div>
-                <div class="order-status-item {{ $order->status == 'processing' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                <div class="order-status-connector {{ $order->status == 'processing' || $order->status == 'shipping' || $order->status == 'completed' ? 'active' : '' }}"></div>
+                <div class="order-status-item {{ $order->status == 'processing' || $order->status == 'shipping' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
                     <div class="status-icon">
                         <i class="bi bi-box-seam"></i>
                     </div>
                     <div class="status-text">Đang xử lý</div>
+                </div>
+                <div class="order-status-connector {{ $order->status == 'shipping' || $order->status == 'completed' ? 'active' : '' }}"></div>
+                <div class="order-status-item {{ $order->status == 'shipping' || $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
+                    <div class="status-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div class="status-text">Đang giao</div>
                 </div>
                 <div class="order-status-connector {{ $order->status == 'completed' ? 'active' : '' }}"></div>
                 <div class="order-status-item {{ $order->status == 'completed' ? 'active' : ($order->status == 'cancelled' ? 'cancelled' : '') }}">
@@ -233,6 +245,38 @@
                     <i class="bi bi-quote me-2"></i>
                     {{ $order->notes }}
                 </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Order Rating -->
+    @if($order->rating)
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-primary"><i class="bi bi-star me-2"></i>Đánh giá từ khách hàng</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3">
+                        <span class="badge bg-primary rounded-pill p-2 fs-6">{{ $order->rating->rating }}/5</span>
+                    </div>
+                    <div class="rating-stars">
+                        @for($i = 1; $i <= 5; $i++)
+                            <i class="bi bi-star-fill {{ $i <= $order->rating->rating ? 'text-warning' : 'text-muted' }} me-1" style="font-size: 1.2rem;"></i>
+                        @endfor
+                    </div>
+                    <div class="ms-auto text-muted">
+                        <small>{{ $order->rating->created_at->format('d/m/Y H:i') }}</small>
+                    </div>
+                </div>
+                @if($order->rating->comment)
+                    <div class="alert alert-light">
+                        <i class="bi bi-quote me-2"></i>
+                        {{ $order->rating->comment }}
+                    </div>
+                @else
+                    <p class="text-muted fst-italic">Khách hàng không để lại nhận xét.</p>
+                @endif
             </div>
         </div>
     @endif

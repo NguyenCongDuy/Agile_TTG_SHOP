@@ -53,4 +53,12 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-} 
+
+    /**
+     * Get the rating for this order.
+     */
+    public function rating()
+    {
+        return $this->hasOne(OrderRating::class);
+    }
+}
