@@ -3,12 +3,12 @@
 @section('title', 'TTG Shop - Máy tính & Linh kiện cao cấp')
 
 @section('content')
-@if (session('success'))
+{{-- @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
+@endif --}}
 
 <!-- Hero Carousel -->
 <div id="homeCarousel" class="carousel slide carousel-fade home-carousel mb-4" data-bs-ride="carousel">
@@ -69,60 +69,6 @@
 </div>
 
 <div class="container">
-
-    <!-- Quick Links -->
-    <section class="quick-links mb-5">
-        <div class="row g-4">
-            <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-primary text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-pc-display h1"></i>
-                        </div>
-                        <h4 class="quick-link-title">Gaming PC</h4>
-                        <p class="quick-link-desc small mb-3">Máy tính chơi game hiệu năng cao</p>
-                        <a href="{{ route('client.category', 'gaming-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-success text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-cpu h1"></i>
-                        </div>
-                        <h4 class="quick-link-title">Linh kiện</h4>
-                        <p class="quick-link-desc small mb-3">Linh kiện chính hãng, bảo hành dài hạn</p>
-                        <a href="{{ route('client.category', 'components') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-info text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-laptop h1"></i>
-                        </div>
-                        <h4 class="quick-link-title">Office PC</h4>
-                        <p class="quick-link-desc small mb-3">Máy tính văn phòng giá tốt</p>
-                        <a href="{{ route('client.category', 'office-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-danger text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-headset h1"></i>
-                        </div>
-                        <h4 class="quick-link-title">Phụ kiện</h4>
-                        <p class="quick-link-desc small mb-3">Phụ kiện gaming chất lượng cao</p>
-                        <a href="{{ route('client.category', 'accessories') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Featured Categories -->
     <section class="featured-categories mb-5">
@@ -454,6 +400,7 @@
                 </div>
             </div>
         </div>
+
     </section>
 
     <!-- Testimonials -->
@@ -565,6 +512,60 @@
                         Chúng tôi sẽ không bao giờ chia sẻ thông tin của bạn với bên thứ ba.
                     </div>
                 </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Moved Quick Links Section -->
+    <section class="quick-links mb-5">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="quick-link-card bg-primary text-white rounded shadow h-100">
+                    <div class="card-body text-center py-4">
+                        <div class="quick-link-icon mb-3">
+                            <i class="bi bi-pc-display h1"></i>
+                        </div>
+                        <h4 class="quick-link-title">Gaming PC</h4>
+                        <p class="quick-link-desc small mb-3">Máy tính chơi game hiệu năng cao</p>
+                        <a href="{{ route('client.category', 'gaming-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="quick-link-card bg-success text-white rounded shadow h-100">
+                    <div class="card-body text-center py-4">
+                        <div class="quick-link-icon mb-3">
+                            <i class="bi bi-cpu h1"></i>
+                        </div>
+                        <h4 class="quick-link-title">Linh kiện</h4>
+                        <p class="quick-link-desc small mb-3">Linh kiện chính hãng, bảo hành dài hạn</p>
+                        <a href="{{ route('client.category', 'components') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="quick-link-card bg-info text-white rounded shadow h-100">
+                    <div class="card-body text-center py-4">
+                        <div class="quick-link-icon mb-3">
+                            <i class="bi bi-laptop h1"></i>
+                        </div>
+                        <h4 class="quick-link-title">Office PC</h4>
+                        <p class="quick-link-desc small mb-3">Máy tính văn phòng giá tốt</p>
+                        <a href="{{ route('client.category', 'office-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="quick-link-card bg-danger text-white rounded shadow h-100">
+                    <div class="card-body text-center py-4">
+                        <div class="quick-link-icon mb-3">
+                            <i class="bi bi-headset h1"></i>
+                        </div>
+                        <h4 class="quick-link-title">Phụ kiện</h4>
+                        <p class="quick-link-desc small mb-3">Phụ kiện gaming chất lượng cao</p>
+                        <a href="{{ route('client.category', 'accessories') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

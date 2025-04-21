@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderDetail;
 use App\Models\Payment;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -305,19 +306,24 @@ class ClientController extends Controller
      */
     public function sendContact(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string|min:10',
+            'noi_dung' => 'required|string|max:5000',
         ]);
 
-        // Here you would typically:
-        // 1. Save the contact message to the database
-        // 2. Send an email notification
-        // 3. Or integrate with a CRM system
+        // Store the contact message in the database (without email)
+        try {
+            Contact::create([
+                'name' => $validatedData['name'],
+                'noi_dung' => $validatedData['noi_dung'],
+            ]);
+        } catch (\Exception $e) {
+            // Optionally log the error
+            // Log::error('Failed to save contact message: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Đã có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại.');
+        }
 
-        // For now, we'll just return a success message
-        return redirect()->back()->with('success', 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.');
+        return redirect()->route('client.contact')->with('success', 'Tin nhắn của bạn đã được gửi thành công và lưu trữ!');
     }
 
     /**
@@ -448,8 +454,6 @@ class ClientController extends Controller
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi xử lý đơn hàng: ' . $e->getMessage());
         }
     }
-
-
 
     public function cancelOrder(Order $order)
     {

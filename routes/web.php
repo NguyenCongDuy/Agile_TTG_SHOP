@@ -59,7 +59,6 @@ Route::prefix('client')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [ClientController::class, 'profile'])->name('client.profile');
         Route::get('/orders', [ClientController::class, 'orders'])->name('client.orders');
-        Route::get('/orders/{id}', [ClientController::class, 'orderDetails'])->name('client.order.details');
         Route::get('/change-password', [ClientController::class, 'showChangePasswordForm'])->name('client.change-password');
         Route::post('/change-password', [ClientController::class, 'changePassword'])->name('client.change-password');
     });

@@ -6,13 +6,6 @@
         <div class="col-lg-10">
             <h1 class="h2 mb-5 text-center">Liên hệ với chúng tôi</h1>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
             <div class="row g-4">
                 <!-- Contact Information -->
                 <div class="col-md-6">
@@ -65,6 +58,7 @@
                                     @enderror
                                 </div>
 
+                                {{-- Remove Email Field
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" name="email" id="email" 
@@ -74,13 +68,14 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                --}}
 
                                 <div class="mb-3">
-                                    <label for="message" class="form-label">Nội dung</label>
-                                    <textarea name="message" id="message" rows="4" 
-                                        class="form-control @error('message') is-invalid @enderror">{{ old('message') }}</textarea>
-                                    @error('message')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    <label for="noi_dung" class="form-label">Nội dung</label>
+                                    <textarea name="noi_dung" id="noi_dung" rows="4" 
+                                        class="form-control @error('noi_dung') is-invalid @enderror">{{ old('noi_dung') }}</textarea>
+                                    @error('noi_dung')
+                                        <div class="invalid-feedback">{{ $noi_dung }}</div>
                                     @enderror
                                 </div>
 
