@@ -61,21 +61,25 @@
                             @endforeach
                         </div>
 
-                        <!-- Price Range -->
+                        <!-- Price Range Slider -->
                         <div class="mb-4">
                             <h6 class="fw-bold mb-2">Khoảng giá</h6>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="min-price" class="form-label small">Tối thiểu</label>
-                                        <input type="number" class="form-control form-control-sm" id="min-price" name="min_price" placeholder="0đ">
-                                    </div>
+                            <div class="price-range-slider">
+                                <div class="range-slider mb-3">
+                                    <input type="range" class="form-range" id="price-range" min="0" max="50000000" step="1000000">
                                 </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="max-price" class="form-label small">Tối đa</label>
-                                        <input type="number" class="form-control form-control-sm" id="max-price" name="max_price" placeholder="50.000.000đ">
+                                <div class="price-inputs">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="price-display">
+                                            <span id="min-price-display">0đ</span> - <span id="max-price-display">50.000.000đ</span>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="reset-price-range">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
                                     </div>
+                                    <!-- Hidden inputs to store the actual values -->
+                                    <input type="hidden" id="min-price" name="min_price" value="0">
+                                    <input type="hidden" id="max-price" name="max_price" value="50000000">
                                 </div>
                             </div>
                         </div>
@@ -315,3 +319,60 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price Range Slider
+        const priceRangeSlider = document.getElementById('price-range');
+        const minPriceDisplay = document.getElementById('min-price-display');
+        const maxPriceDisplay = document.getElementById('max-price-display');
+        const minPriceInput = document.getElementById('min-price');
+        const maxPriceInput = document.getElementById('max-price');
+        const resetPriceRangeBtn = document.getElementById('reset-price-range');
+
+        // Default values
+        const minPrice = 0;
+        const maxPrice = 50000000;
+        let currentValue = maxPrice;
+
+        // Format price as Vietnamese currency
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
+        }
+
+        // Update price display and hidden inputs
+        function updatePriceDisplay(value) {
+            currentValue = value;
+            minPriceDisplay.textContent = formatPrice(minPrice);
+            maxPriceDisplay.textContent = formatPrice(value);
+            minPriceInput.value = minPrice;
+            maxPriceInput.value = value;
+        }
+
+        // Initialize with default values
+        updatePriceDisplay(maxPrice);
+
+        // Handle slider input
+        priceRangeSlider.addEventListener('input', function() {
+            updatePriceDisplay(this.value);
+        });
+
+        // Reset price range
+        resetPriceRangeBtn.addEventListener('click', function() {
+            priceRangeSlider.value = maxPrice;
+            updatePriceDisplay(maxPrice);
+        });
+
+        // Set initial value from URL params if available
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('max_price')) {
+            const urlMaxPrice = parseInt(urlParams.get('max_price'));
+            if (!isNaN(urlMaxPrice) && urlMaxPrice >= minPrice && urlMaxPrice <= maxPrice) {
+                priceRangeSlider.value = urlMaxPrice;
+                updatePriceDisplay(urlMaxPrice);
+            }
+        }
+    });
+</script>
+@endpush
