@@ -25,7 +25,7 @@
                     <h1 class="display-4 fw-bold">Gaming PC Cao Cấp</h1>
                     <p class="lead">Trải nghiệm chơi game đỉnh cao với bộ PC Gaming hiệu năng mạnh mẽ</p>
                     <div class="mt-4">
-                        <a href="{{ route('client.category', 'gaming-pc') }}" class="btn btn-primary btn-lg me-2">Khám phá ngay</a>
+                        <a href="{{ route('client.category', 'pc-gaming') }}" class="btn btn-primary btn-lg me-2">Khám phá ngay</a>
                         <a href="{{ route('client.products') }}" class="btn btn-outline-light btn-lg">Xem tất cả</a>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                     <h1 class="display-4 fw-bold">Linh Kiện Chính Hãng</h1>
                     <p class="lead">Đa dạng linh kiện cao cấp từ các thương hiệu uy tín hàng đầu</p>
                     <div class="mt-4">
-                        <a href="{{ route('client.category', 'components') }}" class="btn btn-primary btn-lg me-2">Mua ngay</a>
+                        <a href="{{ route('client.category', 'cpu') }}" class="btn btn-primary btn-lg me-2">Mua ngay</a>
                         <a href="{{ route('client.products') }}" class="btn btn-outline-light btn-lg">Xem tất cả</a>
                     </div>
                 </div>
@@ -69,57 +69,64 @@
 </div>
 
 <div class="container">
-
     <!-- Quick Links -->
     <section class="quick-links mb-5">
         <div class="row g-4">
             <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-primary text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-pc-display h1"></i>
+                <a href="{{ route('client.category', 'pc-gaming') }}" class="text-decoration-none quick-link-wrapper">
+                    <div class="quick-link-card bg-primary text-white rounded shadow h-100">
+                        <div class="card-body text-center py-4">
+                            <div class="quick-link-icon mb-3">
+                                <i class="bi bi-pc-display h1"></i>
+                            </div>
+                            <h4 class="quick-link-title">Gaming PC</h4>
+                            <p class="quick-link-desc small mb-3">Máy tính chơi game hiệu năng cao</p>
+                            <span class="btn btn-light btn-sm">Xem ngay</span>
                         </div>
-                        <h4 class="quick-link-title">Gaming PC</h4>
-                        <p class="quick-link-desc small mb-3">Máy tính chơi game hiệu năng cao</p>
-                        <a href="{{ route('client.category', 'gaming-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-success text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-cpu h1"></i>
+                <a href="{{ route('client.category', 'cpu') }}" class="text-decoration-none quick-link-wrapper">
+                    <div class="quick-link-card bg-success text-white rounded shadow h-100">
+                        <div class="card-body text-center py-4">
+                            <div class="quick-link-icon mb-3">
+                                <i class="bi bi-cpu h1"></i>
+                            </div>
+                            <h4 class="quick-link-title">Linh kiện</h4>
+                            <p class="quick-link-desc small mb-3">Linh kiện chính hãng, bảo hành dài hạn</p>
+                            <span class="btn btn-light btn-sm">Xem ngay</span>
                         </div>
-                        <h4 class="quick-link-title">Linh kiện</h4>
-                        <p class="quick-link-desc small mb-3">Linh kiện chính hãng, bảo hành dài hạn</p>
-                        <a href="{{ route('client.category', 'components') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-info text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-laptop h1"></i>
+                <a href="{{ route('client.category', 'pc-van-phong') }}" class="text-decoration-none quick-link-wrapper">
+                    <div class="quick-link-card bg-info text-white rounded shadow h-100">
+                        <div class="card-body text-center py-4">
+                            <div class="quick-link-icon mb-3">
+                                <i class="bi bi-laptop h1"></i>
+                            </div>
+                            <h4 class="quick-link-title">Office PC</h4>
+                            <p class="quick-link-desc small mb-3">Máy tính văn phòng giá tốt</p>
+                            <span class="btn btn-light btn-sm">Xem ngay</span>
                         </div>
-                        <h4 class="quick-link-title">Office PC</h4>
-                        <p class="quick-link-desc small mb-3">Máy tính văn phòng giá tốt</p>
-                        <a href="{{ route('client.category', 'office-pc') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="col-md-3 col-6">
-                <div class="quick-link-card bg-danger text-white rounded shadow h-100">
-                    <div class="card-body text-center py-4">
-                        <div class="quick-link-icon mb-3">
-                            <i class="bi bi-headset h1"></i>
+                <a href="{{ route('client.category', 'tan-nhiet') }}" class="text-decoration-none quick-link-wrapper">
+                    <div class="quick-link-card bg-danger text-white rounded shadow h-100">
+                        <div class="card-body text-center py-4">
+                            <div class="quick-link-icon mb-3">
+                                <i class="bi bi-headset h1"></i>
+                            </div>
+                            <h4 class="quick-link-title">Phụ kiện</h4>
+                            <p class="quick-link-desc small mb-3">Phụ kiện gaming chất lượng cao</p>
+                            <span class="btn btn-light btn-sm">Xem ngay</span>
                         </div>
-                        <h4 class="quick-link-title">Phụ kiện</h4>
-                        <p class="quick-link-desc small mb-3">Phụ kiện gaming chất lượng cao</p>
-                        <a href="{{ route('client.category', 'accessories') }}" class="btn btn-light btn-sm stretched-link">Xem ngay</a>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -156,7 +163,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="about-image position-relative">
-                    <img src="https://images.unsplash.com/photo-1551703599-2a1f2c7d7f13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                    <img src="https://images.unsplash.com/photo-1593640495253-23196b27a87f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1742&q=80"
                          class="img-fluid rounded shadow" alt="TTG Shop">
                     <div class="about-badge position-absolute top-0 end-0 bg-primary text-white p-3 m-3 rounded-circle">
                         <div class="h5 mb-0 fw-bold">5+</div>
@@ -244,7 +251,7 @@
                         @endif
                     </div>
                     <div class="product-img-wrapper overflow-hidden">
-                        <img src="{{ $product->image ?? 'https://images.unsplash.com/photo-1587202372583-49330a15584d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80' }}"
+                        <img src="{{ $product->image ?? 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1746&q=80' }}"
                              class="card-img-top product-img" alt="{{ $product->name }}">
                     </div>
                     <div class="card-body d-flex flex-column">
@@ -355,7 +362,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4 d-none d-lg-block">
-                        <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                        <img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1631&q=80"
                              class="img-fluid h-100 object-fit-cover" alt="Gaming PC Special Offer">
                     </div>
                 </div>
@@ -368,89 +375,163 @@
         <div class="section-header d-flex justify-content-between align-items-center mb-4">
             <h2 class="section-title">Sản phẩm phổ biến</h2>
             <div class="section-actions">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary active">Tất cả</button>
-                    <button type="button" class="btn btn-outline-primary">Gaming PC</button>
-                    <button type="button" class="btn btn-outline-primary">Linh kiện</button>
-                    <button type="button" class="btn btn-outline-primary">Phụ kiện</button>
+                <div class="nav nav-pills popular-products-tabs" id="popular-products-tab" role="tablist">
+                    <button class="nav-link active me-2" id="all-tab" data-bs-toggle="pill" data-bs-target="#all-products" type="button" role="tab" aria-controls="all-products" aria-selected="true">Tất cả</button>
+                    <button class="nav-link me-2" id="gaming-tab" data-bs-toggle="pill" data-bs-target="#gaming-products" type="button" role="tab" aria-controls="gaming-products" aria-selected="false">Gaming PC</button>
+                    <button class="nav-link me-2" id="components-tab" data-bs-toggle="pill" data-bs-target="#components-products" type="button" role="tab" aria-controls="components-products" aria-selected="false">Linh kiện</button>
+                    <button class="nav-link" id="accessories-tab" data-bs-toggle="pill" data-bs-target="#accessories-products" type="button" role="tab" aria-controls="accessories-products" aria-selected="false">Phụ kiện</button>
                 </div>
             </div>
         </div>
 
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card product-card-large h-100 border-0 shadow-sm position-relative overflow-hidden">
-                    <div class="row g-0 h-100">
-                        <div class="col-md-6">
-                            <div class="product-img-wrapper h-100">
-                                <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
-                                     class="img-fluid h-100 object-fit-cover" alt="Ultra Gaming PC">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card-body d-flex flex-column h-100">
-                                <div class="mb-auto">
-                                    <span class="badge bg-danger mb-2">Bán chạy nhất</span>
-                                    <h4 class="card-title mb-2">Ultra Gaming PC RTX 4080</h4>
-                                    <div class="product-rating mb-2">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                        <span class="rating-count text-muted small ms-1">(48)</span>
-                                    </div>
-                                    <p class="card-text mb-3">Máy tính chơi game cao cấp với RTX 4080, Intel Core i9, 32GB RAM, 2TB SSD</p>
-                                    <div class="product-price mb-3">
-                                        <span class="current-price fw-bold fs-4">45.990.000đ</span>
-                                        <span class="original-price text-muted text-decoration-line-through ms-2">49.990.000đ</span>
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <a href="#" class="btn btn-primary flex-grow-1 me-2">
-                                        <i class="bi bi-cart-plus me-1"></i>Thêm vào giỏ
-                                    </a>
-                                    <a href="#" class="btn btn-outline-secondary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row g-4 h-100">
-                    @foreach($products->take(4) as $product)
-                    <div class="col-md-6">
+        <div class="tab-content" id="popular-products-tabContent">
+            <div class="tab-pane fade show active" id="all-products" role="tabpanel" aria-labelledby="all-tab">
+                <div class="row g-4">
+                    <!-- PC Gaming RTX 4070 Super -->
+                    <div class="col-lg-3 col-md-6 mb-4">
                         <div class="product-card card h-100 shadow-sm border-0 position-relative">
                             <div class="product-badges position-absolute top-0 start-0 p-2 z-1">
                                 <span class="badge bg-info mb-1 d-block">Mới</span>
                             </div>
                             <div class="product-img-wrapper overflow-hidden">
-                                <img src="{{ $product->image ?? 'https://images.unsplash.com/photo-1591405351990-4726e331f141?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80' }}"
-                                     class="card-img-top product-img" alt="{{ $product->name }}">
+                                <img src="https://images.unsplash.com/photo-1587202372583-49330a15584d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                                     class="card-img-top product-img" alt="PC Gaming RTX 4070 Super">
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <div class="product-info mb-auto">
                                     <p class="product-category text-muted small mb-1">
-                                        <i class="bi bi-tag me-1"></i>{{ $product->category->name }}
+                                        <i class="bi bi-pc-display me-1"></i>PC Gaming
                                     </p>
-                                    <h5 class="product-title card-title text-truncate mb-2">{{ $product->name }}</h5>
+                                    <h5 class="product-title card-title text-truncate mb-2">PC Gaming RTX 4070 Super</h5>
                                     <div class="product-price mb-2">
-                                        <span class="current-price fw-bold">{{ number_format($product->price, 0, ',', '.') }}đ</span>
+                                        <span class="current-price fw-bold">32.500.000đ</span>
                                     </div>
                                 </div>
                                 <div class="product-actions mt-3">
-                                    <a href="{{ route('client.product', $product->slug) }}" class="btn btn-outline-primary w-100">
+                                    <a href="#" class="btn btn-outline-primary w-100">
                                         <i class="bi bi-eye me-1"></i>Xem chi tiết
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @endforeach
+
+                    <!-- PC Văn Phòng Core i5 -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="product-card card h-100 shadow-sm border-0 position-relative">
+                            <div class="product-badges position-absolute top-0 start-0 p-2 z-1">
+                                <span class="badge bg-success mb-1 d-block">Tiết kiệm</span>
+                            </div>
+                            <div class="product-img-wrapper overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1593152167544-085d3b9c4938?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80"
+                                     class="card-img-top product-img" alt="PC Văn Phòng Core i5">
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="product-info mb-auto">
+                                    <p class="product-category text-muted small mb-1">
+                                        <i class="bi bi-laptop me-1"></i>PC Văn Phòng
+                                    </p>
+                                    <h5 class="product-title card-title text-truncate mb-2">PC Văn Phòng Core i5</h5>
+                                    <div class="product-price mb-2">
+                                        <span class="current-price fw-bold">12.900.000đ</span>
+                                    </div>
+                                </div>
+                                <div class="product-actions mt-3">
+                                    <a href="#" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PC Core Ultra RTX 4090 -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="product-card card h-100 shadow-sm border-0 position-relative">
+                            <div class="product-badges position-absolute top-0 start-0 p-2 z-1">
+                                <span class="badge bg-danger mb-1 d-block">Cao cấp</span>
+                            </div>
+                            <div class="product-img-wrapper overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1624705013726-8cb4f9415f40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80"
+                                     class="card-img-top product-img" alt="PC Core Ultra RTX 4090">
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="product-info mb-auto">
+                                    <p class="product-category text-muted small mb-1">
+                                        <i class="bi bi-cpu me-1"></i>PC Core Ultra
+                                    </p>
+                                    <h5 class="product-title card-title text-truncate mb-2">PC Core Ultra RTX 4090</h5>
+                                    <div class="product-price mb-2">
+                                        <span class="current-price fw-bold">64.000.000đ</span>
+                                    </div>
+                                </div>
+                                <div class="product-actions mt-3">
+                                    <a href="#" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PC Mini ITX Ryzen 7 -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="product-card card h-100 shadow-sm border-0 position-relative">
+                            <div class="product-badges position-absolute top-0 start-0 p-2 z-1">
+                                <span class="badge bg-primary mb-1 d-block">Nhỏ gọn</span>
+                            </div>
+                            <div class="product-img-wrapper overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1625842268584-8f3296236761?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                                     class="card-img-top product-img" alt="PC Mini ITX Ryzen 7">
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="product-info mb-auto">
+                                    <p class="product-category text-muted small mb-1">
+                                        <i class="bi bi-pc me-1"></i>PC Mini
+                                    </p>
+                                    <h5 class="product-title card-title text-truncate mb-2">PC Mini ITX Ryzen 7</h5>
+                                    <div class="product-price mb-2">
+                                        <span class="current-price fw-bold">21.500.000đ</span>
+                                    </div>
+                                </div>
+                                <div class="product-actions mt-3">
+                                    <a href="#" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gaming PC Tab Content -->
+            <div class="tab-pane fade" id="gaming-products" role="tabpanel" aria-labelledby="gaming-tab">
+                <div class="row g-4">
+                    <!-- Gaming PC content will be here -->
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">Đang tải sản phẩm Gaming PC...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Components Tab Content -->
+            <div class="tab-pane fade" id="components-products" role="tabpanel" aria-labelledby="components-tab">
+                <div class="row g-4">
+                    <!-- Components content will be here -->
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">Đang tải sản phẩm Linh kiện...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessories Tab Content -->
+            <div class="tab-pane fade" id="accessories-products" role="tabpanel" aria-labelledby="accessories-tab">
+                <div class="row g-4">
+                    <!-- Accessories content will be here -->
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">Đang tải sản phẩm Phụ kiện...</p>
+                    </div>
                 </div>
             </div>
         </div>

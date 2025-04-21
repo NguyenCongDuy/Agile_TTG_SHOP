@@ -131,10 +131,47 @@ class ClientController extends Controller
     /**
      * Display products in a category
      */
-    public function category($slug)
+    public function category($slug, Request $request)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-        $products = Product::where('category_id', $category->id)->paginate(12);
+
+        // Base query
+        $query = Product::where('category_id', $category->id);
+
+        // Apply price filter
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Apply availability filter
+        if ($request->has('availability') && $request->availability == 'in_stock') {
+            $query->where('stock', '>', 0);
+        }
+
+        // Apply sorting
+        switch ($request->sort_by) {
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc'); // newest by default
+        }
+
+        // Get products with pagination
+        $products = $query->paginate(12);
 
         return view('client.category', compact('category', 'products'));
     }
@@ -145,9 +182,47 @@ class ClientController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-        $products = Product::where('name', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->paginate(12);
+
+        // Base query
+        $productQuery = Product::where(function($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")
+              ->orWhere('description', 'like', "%{$query}%");
+        });
+
+        // Apply price filter
+        if ($request->has('min_price') && $request->min_price) {
+            $productQuery->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $productQuery->where('price', '<=', $request->max_price);
+        }
+
+        // Apply availability filter
+        if ($request->has('availability') && $request->availability == 'in_stock') {
+            $productQuery->where('stock', '>', 0);
+        }
+
+        // Apply sorting
+        switch ($request->sort_by) {
+            case 'price_low':
+                $productQuery->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $productQuery->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $productQuery->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $productQuery->orderBy('name', 'desc');
+                break;
+            default:
+                $productQuery->orderBy('created_at', 'desc'); // newest by default
+        }
+
+        // Get products with pagination
+        $products = $productQuery->paginate(12);
 
         return view('client.search', compact('products', 'query'));
     }
