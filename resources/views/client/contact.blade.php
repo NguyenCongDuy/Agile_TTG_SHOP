@@ -109,7 +109,7 @@
                         <i class="bi bi-geo-alt-fill"></i>
                     </div>
                     <h3 class="h5 mb-3">Địa Chỉ</h3>
-                    <p class="text-muted mb-0">123 Đường ABC, Quận XYZ,<br>TP. Hồ Chí Minh, Việt Nam</p>
+                    <p class="text-muted mb-0">Cổng số 2, 13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm,<br>TP.  Hà Nội, Việt Nam</p>
                 </div>
             </div>
         </div>
@@ -211,7 +211,7 @@
                     <p class="text-muted mb-4">Ghé thăm showroom của chúng tôi để trải nghiệm các sản phẩm PC và linh kiện cao cấp.</p>
 
                     <div class="map-container mb-4">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4241674197956!2d106.69158287486876!3d10.780540089318513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3a9d8d1bb3%3A0xd2ecb62ffd4a82de!2zMTIzIMSQxrDhu51uZyBOZ3V54buFbiBUaMOhaSBIb2MsIFBoxrDhu51uZyBQaOG6oW0gTmfFqSBMw6NvLCBRdeG6rW4gMSwgVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1710234567890!5m2!1svi!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.8639324316528!2d105.74239087922669!3d21.038129730626856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1745458332305!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
 
                     <div class="row g-4">
