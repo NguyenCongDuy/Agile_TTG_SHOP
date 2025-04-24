@@ -173,6 +173,17 @@
           </ul>
         </li>
 
+        <!-- Contact Management -->
+        <li class="nav-item">
+          <a href="{{ route('admin.contacts.index') }}" class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-envelope"></i>
+            <p>
+              Quản lý liên hệ
+              <span class="badge bg-danger ms-auto">{{ $unprocessedContactsCount ?? 0 }}</span>
+            </p>
+          </a>
+        </li>
+
         <!-- Client Page -->
         <li class="nav-item">
           <a href="{{ route('client.home') }}" class="nav-link">

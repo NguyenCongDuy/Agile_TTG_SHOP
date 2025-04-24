@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductsController;
@@ -184,6 +185,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/sales', [StatisticsController::class, 'sales'])->name('statistics.sales');
         Route::get('/products', [StatisticsController::class, 'products'])->name('statistics.products');
     });
+
+    // Contact Management
+    Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+    Route::post('/contacts/{id}/process', [ContactController::class, 'markAsProcessed'])->name('contacts.process');
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
 });
 
 require __DIR__ . '/auth.php';
+

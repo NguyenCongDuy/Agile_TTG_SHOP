@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
-    use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'noi_dung',
+        'is_processed',
+        'processed_by',
+        'processed_at'
     ];
+
+    protected $casts = [
+        'is_processed' => 'boolean',
+        'processed_at' => 'datetime'
+    ];
+
+    public function processedBy()
+    {
+        return $this->belongsTo(User::class, 'processed_by');
+    }
 }
+
