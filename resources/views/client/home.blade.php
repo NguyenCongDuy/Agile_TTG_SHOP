@@ -652,7 +652,7 @@
     </section>
 
     <!-- Moved Quick Links Section -->
-    <section class="quick-links mb-5">
+    {{-- <section class="quick-links mb-5">
         <div class="row g-4">
             <div class="col-md-3 col-6">
                 <div class="quick-link-card bg-primary text-white rounded shadow h-100">
@@ -703,7 +703,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 </div>
 
 @push('styles')

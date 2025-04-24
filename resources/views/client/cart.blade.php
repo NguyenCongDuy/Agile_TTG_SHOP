@@ -198,8 +198,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (action === 'increase') {
                 input.value = value + 1;
-            } else if (action === 'decrease' && value > 1) {
-                input.value = value - 1;
+            } else if (action === 'decrease') {
+                if (value > 1) {
+                    input.value = value - 1;
+                }
+            }
+        });
+    });
+
+    // Quantity input validation
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
             }
         });
     });

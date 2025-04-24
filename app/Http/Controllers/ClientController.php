@@ -265,11 +265,54 @@ class ClientController extends Controller
      */
     public function updateCart(Request $request)
     {
-        if($request->id && $request->quantity) {
-            $cart = session()->get('cart');
-            $cart[$request->id]["quantity"] = $request->quantity;
+        try {
+            $updates = $request->updates;
+            $cart = session()->get('cart', []);
+
+            foreach ($updates as $update) {
+                $id = $update['id'];
+                $quantity = (int)$update['quantity'];
+
+                // Validate quantity
+                if ($quantity < 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Số lượng sản phẩm phải lớn hơn 0'
+                    ], 400);
+                }
+
+                // Check stock
+                $product = Product::find($id);
+                if (!$product) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm không tồn tại'
+                    ], 404);
+                }
+
+                if ($product->stock < $quantity) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Sản phẩm '{$product->name}' chỉ còn {$product->stock} trong kho"
+                    ], 400);
+                }
+
+                if (isset($cart[$id])) {
+                    $cart[$id]['quantity'] = $quantity;
+                }
+            }
+
             session()->put('cart', $cart);
-            return redirect()->back()->with('success', 'Cart updated successfully');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Giỏ hàng đã được cập nhật'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi cập nhật giỏ hàng'
+            ], 500);
         }
     }
 
@@ -678,3 +721,16 @@ class ClientController extends Controller
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

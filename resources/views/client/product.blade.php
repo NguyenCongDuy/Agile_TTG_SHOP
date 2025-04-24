@@ -178,7 +178,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <h6 class="fw-bold">SKU:</h6>
-                        <span id="productSku">{{ $product->sku ?? 'N/A' }}</span>
+                        <span id="productSku">{{ $product->stock ?? 'N/A' }}</span>
                     </div>
                 </div>
                 <div class="d-flex mt-3">
