@@ -1,57 +1,84 @@
 @extends('layout.ClientLayout')
 
+@section('title', 'Đổi mật khẩu')
+
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Đổi mật khẩu</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0"><i class="bi bi-shield-lock me-2"></i>Đổi mật khẩu</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-4">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.</p>
 
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
+                    {{-- Session Messages --}}
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-        <form action="{{ route('client.change-password') }}" method="POST">
-            @csrf
-            <div class="mb-4">
-                <label for="current_password" class="block text-gray-700 text-sm font-bold mb-2">Mật khẩu hiện tại</label>
-                <input type="password" name="current_password" id="current_password" 
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('current_password') border-red-500 @enderror">
-                @error('current_password')
-                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                    <form action="{{ route('client.change-password') }}" method="POST">
+                        @csrf
+                        {{-- Current Password --}}
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Mật khẩu hiện tại</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" name="current_password" id="current_password"
+                                    class="form-control @error('current_password') is-invalid @enderror"
+                                    required placeholder="Nhập mật khẩu hiện tại của bạn">
+                                @error('current_password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
 
-            <div class="mb-4">
-                <label for="new_password" class="block text-gray-700 text-sm font-bold mb-2">Mật khẩu mới</label>
-                <input type="password" name="new_password" id="new_password" 
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('new_password') border-red-500 @enderror">
-                @error('new_password')
-                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                        {{-- New Password --}}
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">Mật khẩu mới</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" name="new_password" id="new_password"
+                                    class="form-control @error('new_password') is-invalid @enderror"
+                                    required placeholder="Nhập mật khẩu mới" aria-describedby="newPasswordHelp">
+                                @error('new_password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                             <div id="newPasswordHelp" class="form-text">Ít nhất 8 ký tự.</div>
+                        </div>
 
-            <div class="mb-6">
-                <label for="new_password_confirmation" class="block text-gray-700 text-sm font-bold mb-2">Xác nhận mật khẩu mới</label>
-                <input type="password" name="new_password_confirmation" id="new_password_confirmation" 
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('new_password_confirmation') border-red-500 @enderror">
-                @error('new_password_confirmation')
-                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                        {{-- Confirm New Password --}}
+                        <div class="mb-4">
+                            <label for="new_password_confirmation" class="form-label">Xác nhận mật khẩu mới</label>
+                            <div class="input-group">
+                                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" name="new_password_confirmation" id="new_password_confirmation"
+                                    class="form-control"
+                                    required placeholder="Nhập lại mật khẩu mới">
+                            </div>
+                        </div>
 
-            <div class="flex items-center justify-between">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Đổi mật khẩu
-                </button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-key me-2"></i>Đổi mật khẩu
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 @endsection 

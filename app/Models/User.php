@@ -46,8 +46,26 @@ class User extends Authenticatable
         'is_locked' => 'boolean',
     ];
 
+    /**
+     * Get the orders for the user.
+     */
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
+
+    /**
+     * Delete user's avatar file if exists
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
+            }
+        });
+    }
 }
+

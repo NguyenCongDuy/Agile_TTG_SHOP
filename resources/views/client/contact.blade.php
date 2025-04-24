@@ -214,25 +214,25 @@
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.8639324316528!2d105.74239087922669!3d21.038129730626856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1745458332305!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
 
-                    <div class="row g-4">
+            <div class="row g-4">
                         <div class="col-sm-6">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 me-3">
                                     <i class="bi bi-truck text-primary fs-4"></i>
                                 </div>
-                                <div>
+                                    <div>
                                     <h5 class="h6 mb-1">Giao hàng miễn phí</h5>
                                     <p class="text-muted small mb-0">Cho đơn hàng từ 5 triệu đồng</p>
                                 </div>
                             </div>
-                        </div>
+                                    </div>
 
                         <div class="col-sm-6">
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0 me-3">
                                     <i class="bi bi-shield-check text-primary fs-4"></i>
                                 </div>
-                                <div>
+                                    <div>
                                     <h5 class="h6 mb-1">Bảo hành chính hãng</h5>
                                     <p class="text-muted small mb-0">Từ 12 đến 36 tháng</p>
                                 </div>
@@ -243,7 +243,7 @@
             </div>
         </div>
     </div>
-</div>
+                                </div>
 
 <!-- FAQ Section -->
 <div class="bg-light py-5 mt-5">
@@ -264,7 +264,7 @@
                                 Thời gian giao hàng thông thường từ 1-3 ngày làm việc đối với khu vực nội thành và 3-5 ngày đối với khu vực ngoại thành và các tỉnh thành khác.
                             </div>
                         </div>
-                    </div>
+                                </div>
 
                     <div class="accordion-item border-0 mb-3 shadow-sm">
                         <h2 class="accordion-header">
@@ -277,18 +277,18 @@
                                 Khách hàng có thể đổi trả sản phẩm trong vòng 7 ngày kể từ ngày nhận hàng nếu sản phẩm còn nguyên vẹn, đầy đủ phụ kiện và không có dấu hiệu đã qua sử dụng.
                             </div>
                         </div>
-                    </div>
+                                </div>
 
                     <div class="accordion-item border-0 shadow-sm">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                                 Làm thế nào để theo dõi đơn hàng?
-                            </button>
+                                    </button>
                         </h2>
                         <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
                                 Bạn có thể theo dõi đơn hàng bằng cách đăng nhập vào tài khoản và vào mục "Đơn hàng của tôi". Tại đây bạn sẽ thấy trạng thái hiện tại của đơn hàng.
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -296,7 +296,7 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection 
 
 @push('scripts')
 <script>

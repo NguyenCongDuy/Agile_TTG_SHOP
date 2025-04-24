@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -42,19 +43,50 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+        try {
+            DB::beginTransaction();
 
-        $user = $request->user();
+            $request->validateWithBag('userDeletion', [
+                'password' => ['required', 'current_password'],
+            ]);
 
-        Auth::guard('web')->logout();
+            $user = $request->user();
 
-        $user->delete();
+            // Xóa các đơn hàng và thanh toán liên quan
+            foreach ($user->orders as $order) {
+                $order->orderDetails()->delete();
+                if ($order->payment) {
+                    $order->payment->delete();
+                }
+                $order->delete();
+            }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            // Xóa avatar nếu có
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
+            }
 
-        return redirect()->route('client.home');
+            // Đăng xuất người dùng
+            Auth::guard('web')->logout();
+
+            // Xóa tài khoản
+            $user->delete();
+
+            // Xóa session
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            DB::commit();
+
+            return redirect()->route('client.home')
+                ->with('success', 'Tài khoản của bạn đã được xóa thành công.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()
+                ->withErrors(['userDeletion' => 'Có lỗi xảy ra khi xóa tài khoản.'])
+                ->withInput();
+        }
     }
 }
+
