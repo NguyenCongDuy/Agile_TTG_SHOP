@@ -107,9 +107,12 @@
                                     <i class="fas fa-eye"></i> Chi tiết
                                 </a>
                                 @if($order->status === 'pending')
-                                    <button class="btn btn-danger btn-sm cancel-order" data-id="{{ $order->id }}">
-                                        <i class="fas fa-times"></i> Hủy đơn
-                                    </button>
+                                    <form action="{{ route('client.orders.cancel', $order->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                            <i class="fas fa-times"></i> Hủy đơn
+                                        </button>
+                                    </form>
                                 @endif
                             </td>
                         </tr>
@@ -136,25 +139,38 @@
         // Cancel order functionality
         $('.cancel-order').click(function() {
             const orderId = $(this).data('id');
+            const button = $(this);
 
             if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+                button.prop('disabled', true);
+                
                 $.ajax({
                     url: `/client/orders/${orderId}/cancel`,
-                    type: 'POST',
+                    type: 'DELETE', // Changed from POST to DELETE
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         if (response.success) {
-                            alert(response.message);
-                            location.reload();
+                            toastr.success(response.message);
+                            // Remove the order row from the table
+                            button.closest('tr').fadeOut(300, function() {
+                                $(this).remove();
+                                
+                                // If no orders left, show empty state
+                                if ($('tbody tr').length === 0) {
+                                    location.reload();
+                                }
+                            });
                         } else {
-                            alert(response.message || 'Có lỗi xảy ra');
+                            toastr.error(response.message || 'Có lỗi xảy ra');
+                            button.prop('disabled', false);
                         }
                     },
                     error: function(xhr) {
                         const response = xhr.responseJSON;
-                        alert(response?.message || 'Có lỗi xảy ra');
+                        toastr.error(response?.message || 'Có lỗi xảy ra');
+                        button.prop('disabled', false);
                     }
                 });
             }
@@ -163,3 +179,6 @@
 </script>
 @endpush
 @endsection
+
+
+

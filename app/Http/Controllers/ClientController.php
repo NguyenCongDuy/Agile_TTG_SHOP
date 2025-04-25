@@ -586,37 +586,43 @@ class ClientController extends Controller
     {
         // Check if order belongs to authenticated user
         if ($order->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn không có quyền hủy đơn hàng này'
-            ], 403);
+            return redirect()->back()->with('error', 'Bạn không có quyền hủy đơn hàng này');
         }
 
         // Check if order can be cancelled (only pending orders)
         if ($order->status !== 'pending') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Chỉ có thể hủy đơn hàng đang chờ xử lý'
-            ], 400);
+            return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng đang chờ xử lý');
         }
 
         try {
             DB::beginTransaction();
 
-            $order->update(['status' => 'cancelled']);
+            // Restore product stock
+            foreach ($order->orderDetails as $detail) {
+                $product = $detail->product;
+                if ($product) {
+                    $product->increment('stock', $detail->quantity);
+                }
+            }
+
+            // Delete order details
+            $order->orderDetails()->delete();
+            
+            // Delete payment if exists
+            if ($order->payment) {
+                $order->payment()->delete();
+            }
+
+            // Delete the order
+            $order->delete();
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Đơn hàng đã được hủy thành công'
-            ]);
+            return redirect()->route('client.orders')->with('success', 'Đơn hàng đã được hủy thành công');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi hủy đơn hàng'
-            ], 500);
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn hàng');
         }
     }
 
@@ -721,6 +727,9 @@ class ClientController extends Controller
         }
     }
 }
+
+
+
 
 
 

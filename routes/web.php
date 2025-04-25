@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
 });
 
 // Client Routes
@@ -78,7 +79,7 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::prefix('orders')->group(function () {
             Route::get('/', [ClientController::class, 'orders'])->name('orders');
             Route::get('/{id}', [ClientController::class, 'orderDetails'])->name('orders.detail');
-            Route::post('/{order}/cancel', [ClientController::class, 'cancelOrder'])->name('orders.cancel');
+            Route::post('/{order}/cancel', [ClientController::class, 'cancelOrder'])->name('orders.cancel'); // Đổi từ DELETE sang POST
             Route::post('/{order}/confirm', [ClientController::class, 'confirmOrder'])->name('orders.confirm');
             Route::post('/{order}/rate', [ClientController::class, 'rateOrder'])->name('orders.rate');
         });
@@ -193,4 +194,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 require __DIR__ . '/auth.php';
+
+
+
 
