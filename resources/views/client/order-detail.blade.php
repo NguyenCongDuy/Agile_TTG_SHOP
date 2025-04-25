@@ -5,13 +5,28 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">Chi tiết đơn hàng #{{ $order->id }}</h1>
         <div class="d-flex gap-2">
-            @if($order->status === 'shipping')
-            <button id="confirm-order-btn" class="btn btn-success">
-                <i class="fas fa-check-circle me-2"></i>Xác nhận đã nhận hàng
-            </button>
+            <!-- Confirm Reception Button/Form -->
+            @if($order->status === \App\Models\Order::STATUS_DELIVERING)
+                <form action="{{ route('client.orders.confirm', $order) }}" method="POST" class="d-inline-block">
+                    @csrf
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle me-2"></i>Xác nhận đã nhận hàng
+                    </button>
+                </form>
             @endif
+
+             <!-- Cancel Order Button/Form -->
+            @if($order->status === \App\Models\Order::STATUS_PENDING)
+                <form action="{{ route('client.orders.cancel', $order) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times-circle me-2"></i>Hủy đơn hàng
+                    </button>
+                </form>
+            @endif
+
             <a href="{{ route('client.orders') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                <i class="fas fa-arrow-left me-2"></i>Quay lại DS Đơn hàng
             </a>
         </div>
     </div>
@@ -103,18 +118,23 @@
                         <label class="form-label text-muted">Trạng thái đơn hàng</label>
                         <div>
                             @switch($order->status)
-                                @case('pending')
+                                @case(\App\Models\Order::STATUS_PENDING)
                                     <span class="badge bg-warning">Chờ xử lý</span>
                                     @break
-                                @case('processing')
+                                @case(\App\Models\Order::STATUS_PROCESSING)
                                     <span class="badge bg-info">Đang xử lý</span>
                                     @break
-                                @case('completed')
+                                @case(\App\Models\Order::STATUS_DELIVERING)
+                                    <span class="badge bg-primary">Đang giao</span>
+                                    @break
+                                @case(\App\Models\Order::STATUS_COMPLETED)
                                     <span class="badge bg-success">Hoàn thành</span>
                                     @break
-                                @case('cancelled')
+                                @case(\App\Models\Order::STATUS_CANCELLED)
                                     <span class="badge bg-danger">Đã hủy</span>
                                     @break
+                                @default
+                                     <span class="badge bg-secondary">{{ $order->status }}</span>
                             @endswitch
                         </div>
                     </div>
@@ -134,17 +154,22 @@
                     <div class="mb-3">
                         <label class="form-label text-muted">Trạng thái thanh toán</label>
                         <div>
-                            @if($order->payment)
-                                @switch($order->payment->status)
-                                    @case('pending')
+                            @if($order->payment || $order->payment_status)
+                                @php
+                                    $paymentStatus = $order->payment_status ?? ($order->payment ? $order->payment->status : null);
+                                @endphp
+                                @switch($paymentStatus)
+                                    @case(\App\Models\Order::PAYMENT_PENDING)
                                         <span class="badge bg-warning">Chờ thanh toán</span>
                                         @break
-                                    @case('paid')
+                                    @case(\App\Models\Order::PAYMENT_PAID)
                                         <span class="badge bg-success">Đã thanh toán</span>
                                         @break
-                                    @case('unpaid')
+                                    @case(\App\Models\Order::PAYMENT_UNPAID)
                                         <span class="badge bg-danger">Chưa thanh toán</span>
                                         @break
+                                     @default
+                                        <span class="badge bg-secondary">{{ $paymentStatus }}</span>
                                 @endswitch
                             @else
                                 <span class="badge bg-secondary">Chưa có thông tin</span>

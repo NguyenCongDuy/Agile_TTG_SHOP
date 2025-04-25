@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
@@ -405,8 +406,12 @@ class ClientController extends Controller
 
         // Check if the order belongs to the authenticated user
         if ($order->user_id != auth()->id()) {
-            abort(403);
+            Log::warning("Unauthorized attempt to view order #{$order->id} by user #" . auth()->id());
+            abort(403, 'Unauthorized action.');
         }
+
+        // Log the status being passed to the view
+        Log::info("Passing order #{$order->id} to client.order-detail view with status: '{$order->status}'.");
 
         return view('client.order-detail', compact('order'));
     }
@@ -586,84 +591,70 @@ class ClientController extends Controller
     {
         // Check if order belongs to authenticated user
         if ($order->user_id !== auth()->id()) {
-            return redirect()->back()->with('error', 'Bạn không có quyền hủy đơn hàng này');
+            return redirect()->back()->with('error', 'Bạn không có quyền hủy đơn hàng này.');
         }
 
         // Check if order can be cancelled (only pending orders)
-        if ($order->status !== 'pending') {
-            return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng đang chờ xử lý');
+        if ($order->status !== Order::STATUS_PENDING) {
+            return redirect()->back()->with('error', 'Chỉ có thể hủy đơn hàng khi ở trạng thái "Chờ xử lý".');
         }
 
         try {
-            DB::beginTransaction();
+            // Only update the status to cancelled
+            $order->status = Order::STATUS_CANCELLED;
+            $order->save();
 
-            // Restore product stock
-            foreach ($order->orderDetails as $detail) {
-                $product = $detail->product;
-                if ($product) {
-                    $product->increment('stock', $detail->quantity);
-                }
-            }
+            // Optional: Restore product stock if needed (check if original code did this)
+            // Consider if stock should be restored here or managed differently
+            // foreach ($order->orderDetails as $detail) {
+            //     if ($detail->product) {
+            //         $detail->product->increment('stock', $detail->quantity);
+            //     }
+            // }
 
-            // Delete order details
-            $order->orderDetails()->delete();
-            
-            // Delete payment if exists
-            if ($order->payment) {
-                $order->payment()->delete();
-            }
-
-            // Delete the order
-            $order->delete();
-
-            DB::commit();
-
-            return redirect()->route('client.orders')->with('success', 'Đơn hàng đã được hủy thành công');
+            return redirect()->route('client.orders.detail', $order)->with('success', 'Đơn hàng đã được hủy thành công.');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn hàng');
+            // Log::error("Error cancelling order {$order->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi hủy đơn hàng: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Confirm order completion (only for shipping orders)
-     */
     public function confirmOrder(Order $order)
     {
         // Check if order belongs to authenticated user
         if ($order->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn không có quyền xác nhận đơn hàng này'
-            ], 403);
+            return redirect()->back()->with('error', 'Bạn không có quyền xác nhận đơn hàng này.');
         }
 
-        // Check if order can be confirmed (only shipping orders)
-        if ($order->status !== 'shipping') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Chỉ có thể xác nhận đơn hàng đang giao'
-            ], 400);
+        // Check if order is in 'delivering' status
+        if ($order->status !== Order::STATUS_DELIVERING) {
+            return redirect()->back()->with('error', 'Chỉ có thể xác nhận đơn hàng khi ở trạng thái "Đang giao".');
         }
 
         try {
             DB::beginTransaction();
 
-            $order->update(['status' => 'completed']);
+            // Update order status to 'completed'
+            $order->status = Order::STATUS_COMPLETED;
+            // Update payment status to 'paid'
+            $order->payment_status = Order::PAYMENT_PAID;
+            $order->save();
+
+            // Update associated Payment record status as well
+            if ($order->payment) {
+                $order->payment->status = Order::PAYMENT_PAID;
+                $order->payment->save();
+            }
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Đơn hàng đã được xác nhận hoàn thành'
-            ]);
+            return redirect()->route('client.orders.detail', $order)->with('success', 'Xác nhận nhận hàng thành công. Đơn hàng đã hoàn thành!');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi xác nhận đơn hàng'
-            ], 500);
+            // Log::error("Error confirming order {$order->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi xác nhận đơn hàng: ' . $e->getMessage());
         }
     }
 

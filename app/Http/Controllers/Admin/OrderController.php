@@ -8,6 +8,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -74,52 +75,56 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,processing,shipping,completed,cancelled'
+            'status' => ['required', 'string', \Illuminate\Validation\Rule::in([
+                Order::STATUS_PENDING,
+                Order::STATUS_PROCESSING,
+                Order::STATUS_DELIVERING,
+                Order::STATUS_CANCELLED,
+            ])]
         ]);
 
         try {
-            DB::beginTransaction();
-
-            // Get old status for comparison
             $oldStatus = $order->status;
             $newStatus = $request->status;
 
-            // Validate status transitions
-            $validTransition = $this->validateStatusTransition($oldStatus, $newStatus);
+            Log::info("Admin attempting to update order #{$order->id} status from '{$oldStatus}' to '{$newStatus}'.");
 
-            if (!$validTransition['valid']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $validTransition['message']
-                ], 400);
+            // --- Status Transition Validation ---
+            // Prevent going back from processing to pending
+            if ($oldStatus === Order::STATUS_PROCESSING && $newStatus === Order::STATUS_PENDING) {
+                Log::warning("Admin tried to revert order #{$order->id} from processing to pending. Denied.");
+                return redirect()->back()->with('error', 'Không thể quay lại trạng thái "Chờ xử lý" từ "Đang xử lý".');
             }
 
-            // Only allow admin to change to completed if the status is not already completed
-            // Completed status should be set by the customer
-            if ($newStatus === 'completed' && $oldStatus !== 'completed') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chỉ khách hàng mới có thể xác nhận hoàn thành đơn hàng'
-                ], 400);
+            // Prevent going back from delivering to pending or processing
+            if ($oldStatus === Order::STATUS_DELIVERING && \in_array($newStatus, [Order::STATUS_PENDING, Order::STATUS_PROCESSING])) {
+                Log::warning("Admin tried to revert order #{$order->id} from delivering to '{$newStatus}'. Denied.");
+                $newStatusText = $newStatus === Order::STATUS_PENDING ? 'Chờ xử lý' : 'Đang xử lý';
+                return redirect()->back()->with('error', 'Không thể quay lại trạng thái "' . $newStatusText . '" từ "Đang giao".');
             }
 
-            // Update order status
-            $order->update(['status' => $newStatus]);
+            // Prevent admin from marking as completed directly (already exists)
+            if ($newStatus === Order::STATUS_COMPLETED) {
+                Log::warning("Admin tried to directly set order #{$order->id} to completed. Denied.");
+                return redirect()->back()->with('error', 'Trạng thái "Hoàn thành" chỉ được cập nhật khi khách hàng xác nhận.');
+            }
+            // --- End Status Transition Validation ---
 
-            // Add notification logic here if needed
-            // For example, you could send an email to the customer
-            // or create a notification record in the database
+            $order->status = $newStatus;
+            $saveResult = $order->save();
 
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Trạng thái đơn hàng đã được cập nhật thành công',
-                'old_status' => $oldStatus,
-                'new_status' => $newStatus
-            ]);
+            Log::info("Order #{$order->id} status save() attempt result: " . ($saveResult ? 'Success' : 'Failure') . ". Status in model post-save: " . $order->status);
+
+            if (!$saveResult) {
+                 Log::error("Failed to save status update for order #{$order->id}. Save method returned false.");
+                 return redirect()->back()->with('error', 'Không thể lưu trạng thái mới vào cơ sở dữ liệu.');
+            }
+
+            return redirect()->route('admin.orders.show', $order)->with('success', 'Trạng thái đơn hàng đã được cập nhật thành công.');
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+             Log::error("Exception updating status for order #{$order->id}: " . $e->getMessage(), ['exception' => $e]);
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi cập nhật trạng thái: ' . $e->getMessage());
         }
     }
 
@@ -161,39 +166,44 @@ class OrderController extends Controller
     public function updatePaymentStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,paid,unpaid'
+            'status' => ['required', 'string', \Illuminate\Validation\Rule::in([
+                Order::PAYMENT_UNPAID, // Use constant
+                Order::PAYMENT_PAID,   // Use constant
+                Order::PAYMENT_PENDING, // Assuming you have this constant or use 'pending' string
+                Order::PAYMENT_FAILED,  // If applicable
+                Order::PAYMENT_REFUNDED // If applicable
+            ])]
         ]);
 
+        // Note: The original code updated Payment model status.
+        // This function might need adjustments based on how payment_status on Order model is intended to be used.
+        // Assuming we now want to update the payment_status field on the Order model directly.
         try {
-            DB::beginTransaction();
+            // Get old payment status
+            $oldStatus = $order->payment_status;
+            $newStatus = $request->status;
 
-            // Get old payment status for comparison
-            $oldStatus = $order->payment ? $order->payment->status : null;
-
-            if (!$order->payment) {
-                $order->payment()->create([
-                    'status' => $request->status,
-                    'amount' => $order->total_amount,
-                    'method' => $order->payment_method ?? 'bank_transfer'
-                ]);
-            } else {
-                $order->payment->update(['status' => $request->status]);
+            // Prevent direct update to 'paid' if it should only happen via client confirmation
+            if ($newStatus === Order::PAYMENT_PAID && $order->status !== Order::STATUS_COMPLETED) {
+                 return redirect()->back()->with('error', 'Trạng thái "Đã thanh toán" chỉ được cập nhật khi đơn hàng hoàn thành.');
             }
 
-            // Add notification logic here if needed
-            // For example, you could send an email to the customer
-            // or create a notification record in the database
 
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Trạng thái thanh toán đã được cập nhật thành công',
-                'old_status' => $oldStatus,
-                'new_status' => $request->status
-            ]);
+            $order->payment_status = $newStatus;
+            $order->save();
+
+            // Also update the associated Payment record if it exists and is relevant
+            if ($order->payment) {
+                $order->payment->status = $newStatus; // Keep Payment record status in sync? Decide based on logic.
+                $order->payment->save();
+            }
+
+
+            return redirect()->route('admin.orders.show', $order)->with('success', 'Trạng thái thanh toán đã được cập nhật thành công.');
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+             // Log::error("Error updating payment status for order {$order->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi cập nhật trạng thái thanh toán: ' . $e->getMessage());
         }
     }
 

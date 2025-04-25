@@ -14,6 +14,7 @@
                         <option value="">Tất cả</option>
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
                         <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Đang xử lý</option>
+                        <option value="delivering" {{ request('status') == 'delivering' ? 'selected' : '' }}>Đang giao</option>
                         <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
                         <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
                     </select>
@@ -77,12 +78,17 @@
                                     @case('processing')
                                         <span class="badge bg-info">Đang xử lý</span>
                                         @break
+                                    @case('delivering')
+                                        <span class="badge bg-primary">Đang giao</span>
+                                        @break
                                     @case('completed')
                                         <span class="badge bg-success">Hoàn thành</span>
                                         @break
                                     @case('cancelled')
                                         <span class="badge bg-danger">Đã hủy</span>
                                         @break
+                                    @default
+                                        <span class="badge bg-secondary">{{ $order->status }}</span>
                                 @endswitch
                             </td>
                             <td>

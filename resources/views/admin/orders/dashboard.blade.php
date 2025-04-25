@@ -129,7 +129,7 @@
     </div>
 
     <!-- Order Chart -->
-    <div class="card shadow mb-4">
+    {{-- <div class="card shadow mb-4">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0 text-primary"><i class="bi bi-graph-up me-2"></i>Biểu đồ đơn hàng</h5>
             <div>
@@ -143,7 +143,7 @@
         <div class="card-body">
             <div id="orderChart" style="height: 300px;"></div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Recent Orders -->
     <div class="card shadow mb-4">

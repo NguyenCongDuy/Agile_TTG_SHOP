@@ -11,39 +11,45 @@
             <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> Quay lại
             </a>
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="orderActionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear"></i> Thao tác
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="orderActionDropdown">
-                    <li>
-                        <a class="dropdown-item update-status" href="#" data-status="processing" data-id="{{ $order->id }}">
-                            <i class="bi bi-play-circle text-info"></i> Chuyển sang đang xử lý
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item update-status" href="#" data-status="shipping" data-id="{{ $order->id }}">
-                            <i class="bi bi-truck text-primary"></i> Chuyển sang đang giao
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item update-status" href="#" data-status="completed" data-id="{{ $order->id }}">
-                            <i class="bi bi-check-circle text-success"></i> Đánh dấu hoàn thành
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item update-status" href="#" data-status="cancelled" data-id="{{ $order->id }}">
-                            <i class="bi bi-x-circle text-danger"></i> Hủy đơn hàng
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item" href="#" id="printOrder">
-                            <i class="bi bi-printer"></i> In đơn hàng
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            
+            <!-- Status Update Form -->
+            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="d-inline-block">
+                @csrf
+                <div class="input-group">
+                    <select name="status" class="form-select" id="order-status-select">
+                        <option value="{{ App\Models\Order::STATUS_PENDING }}" 
+                                {{ $order->status == App\Models\Order::STATUS_PENDING ? 'selected' : '' }} 
+                                @if(in_array($order->status, [App\Models\Order::STATUS_PROCESSING, App\Models\Order::STATUS_DELIVERING, App\Models\Order::STATUS_COMPLETED, App\Models\Order::STATUS_CANCELLED])) disabled @endif>Chờ xử lý</option>
+                                
+                        <option value="{{ App\Models\Order::STATUS_PROCESSING }}" 
+                                {{ $order->status == App\Models\Order::STATUS_PROCESSING ? 'selected' : '' }} 
+                                @if(in_array($order->status, [App\Models\Order::STATUS_DELIVERING, App\Models\Order::STATUS_COMPLETED, App\Models\Order::STATUS_CANCELLED])) disabled @endif>Đang xử lý</option>
+                                
+                        <option value="{{ App\Models\Order::STATUS_DELIVERING }}" 
+                                {{ $order->status == App\Models\Order::STATUS_DELIVERING ? 'selected' : '' }} 
+                                @if(in_array($order->status, [App\Models\Order::STATUS_COMPLETED, App\Models\Order::STATUS_CANCELLED])) disabled @endif>Đang giao</option>
+                                
+                        <option value="{{ App\Models\Order::STATUS_CANCELLED }}" 
+                                {{ $order->status == App\Models\Order::STATUS_CANCELLED ? 'selected' : '' }} 
+                                @if(in_array($order->status, [App\Models\Order::STATUS_COMPLETED, App\Models\Order::STATUS_CANCELLED])) disabled @endif>Hủy đơn hàng</option>
+                                
+                        <!-- Admin cannot directly set to completed, always show as disabled if completed -->
+                        @if($order->status == App\Models\Order::STATUS_COMPLETED)
+                            <option value="{{ App\Models\Order::STATUS_COMPLETED }}" selected disabled>Đã hoàn thành</option>
+                        @endif
+                    </select>
+                    <button type="submit" class="btn btn-primary" 
+                            @if(in_array($order->status, [App\Models\Order::STATUS_COMPLETED, App\Models\Order::STATUS_CANCELLED])) disabled @endif>
+                        Cập nhật TT
+                    </button>
+                </div>
+            </form>
+
+            <!-- Optional: Print button or other actions -->
+             <a class="btn btn-outline-info" href="#" id="printOrder">
+                <i class="bi bi-printer"></i> In
+            </a>
+
         </div>
     </div>
 
@@ -100,12 +106,15 @@
                     </div>
                     <div class="mb-3">
                         <label class="text-muted d-block">Trạng thái:</label>
-                        <span class="badge bg-{{ $order->status == 'completed' ? 'success' :
-                            ($order->status == 'processing' ? 'info' :
-                            ($order->status == 'cancelled' ? 'danger' : 'warning')) }}">
-                            {{ $order->status == 'completed' ? 'Hoàn thành' :
-                               ($order->status == 'processing' ? 'Đang xử lý' :
-                               ($order->status == 'cancelled' ? 'Đã hủy' : 'Chờ xử lý')) }}
+                        <span class="badge bg-{{ $order->status == \App\Models\Order::STATUS_COMPLETED ? 'success' :
+                            ($order->status == \App\Models\Order::STATUS_PROCESSING ? 'info' :
+                            ($order->status == \App\Models\Order::STATUS_DELIVERING ? 'primary' :
+                            ($order->status == \App\Models\Order::STATUS_CANCELLED ? 'danger' : 'warning'))) }}">
+                            {{ $order->status == \App\Models\Order::STATUS_COMPLETED ? 'Hoàn thành' :
+                               ($order->status == \App\Models\Order::STATUS_PROCESSING ? 'Đang xử lý' :
+                               ($order->status == \App\Models\Order::STATUS_DELIVERING ? 'Đang giao' :
+                               ($order->status == \App\Models\Order::STATUS_CANCELLED ? 'Đã hủy' :
+                               ($order->status == \App\Models\Order::STATUS_PENDING ? 'Chờ xử lý' : $order->status)))) }}
                         </span>
                     </div>
                     <div class="mb-3">
@@ -154,10 +163,11 @@
                     @if($order->payment)
                         <div class="mb-3">
                             <label class="text-muted d-block">Trạng thái thanh toán:</label>
-                            <span class="badge bg-{{ $order->payment->status == 'paid' ? 'success' :
-                                ($order->payment->status == 'unpaid' ? 'danger' : 'warning') }}">
-                                {{ $order->payment->status == 'paid' ? 'Đã thanh toán' :
-                                   ($order->payment->status == 'unpaid' ? 'Chưa thanh toán' : 'Chờ thanh toán') }}
+                            <span class="badge bg-{{ $order->payment_status == \App\Models\Order::PAYMENT_PAID ? 'success' :
+                                ($order->payment_status == \App\Models\Order::PAYMENT_UNPAID ? 'danger' : 'warning') }}">
+                                {{ $order->payment_status == \App\Models\Order::PAYMENT_PAID ? 'Đã thanh toán' :
+                                   ($order->payment_status == \App\Models\Order::PAYMENT_UNPAID ? 'Chưa thanh toán' :
+                                   ($order->payment_status == \App\Models\Order::PAYMENT_PENDING ? 'Chờ thanh toán' : $order->payment_status)) }} 
                             </span>
                         </div>
                         <div class="mb-3">
@@ -372,40 +382,6 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Update order status
-    $('.update-status').click(function(e) {
-        e.preventDefault();
-
-        const status = $(this).data('status');
-        const orderId = $(this).data('id');
-
-        if (confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng?')) {
-            $.ajax({
-                url: '/admin/orders/' + orderId + '/status',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    status: status
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message || 'Cập nhật trạng thái thành công');
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        toastr.error(response.message || 'Có lỗi xảy ra');
-                    }
-                },
-                error: function(xhr) {
-                    toastr.error(xhr.responseJSON?.message || 'Có lỗi xảy ra, vui lòng thử lại');
-                }
-            });
-        }
-    });
-
     // Print order
     $('#printOrder').click(function(e) {
         e.preventDefault();

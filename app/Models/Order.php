@@ -9,6 +9,20 @@ class Order extends Model
 {
     use HasFactory;
 
+    // Order Statuses
+    const STATUS_PENDING = 'pending';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_DELIVERING = 'delivering';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELLED = 'cancelled';
+
+    // Payment Statuses
+    const PAYMENT_UNPAID = 'unpaid';
+    const PAYMENT_PAID = 'paid';
+    const PAYMENT_PENDING = 'pending';
+    const PAYMENT_FAILED = 'failed'; // Optional: Consider adding failed status
+    const PAYMENT_REFUNDED = 'refunded'; // Optional: Consider adding refunded status
+
     protected $fillable = [
         'user_id',
         'name',
@@ -18,6 +32,7 @@ class Order extends Model
         'payment_method',
         'notes',
         'status',
+        'payment_status',
         'total_amount'
     ];
 
